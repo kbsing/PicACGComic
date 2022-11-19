@@ -5,6 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -37,6 +41,10 @@ class HomeFragment: Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         search.setOnClickListener(this)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+            root.updatePadding(0, insets.getInsets(Type.statusBars()).top, 0, 0)
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     override fun onDestroyView() {
