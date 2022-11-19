@@ -1,7 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    app:statusBarBackground="?attr/colorSurface">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/material_card_view_search"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_search_height"
+        android:layout_marginHorizontal="@dimen/md_spec_spacing_hor_8"
+        android:layout_marginVertical="@dimen/md_spec_spacing_ver_8"
+        android:foreground="?attr/selectableItemBackground"
+        android:transitionName="@string/search_transition"
+        app:cardBackgroundColor="?attr/colorSecondary"
+        app:cardCornerRadius="@dimen/home_search_radius"
+        app:cardPreventCornerOverlap="false"
+        app:strokeWidth="0dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="@dimen/home_search_padding_hor">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/app_compat_image_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/md_spec_spacing_hor_16"
+                android:src="@drawable/ic_round_search_24"
+                android:tint="?attr/colorOnSecondary" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/app_compat_image_view"
+                android:layout_centerVertical="true" />
+
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
