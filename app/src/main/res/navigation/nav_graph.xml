@@ -8,7 +8,16 @@
 
     <fragment
         android:id="@+id/home"
-        android:name="projekt.cloud.piece.pic.ui.HomeFragment"
-        tools:layout="@layout/fragment_home" />
+        android:name="projekt.cloud.piece.pic.ui.home.HomeFragment"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_to_search"
+            app:destination="@id/search" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/search"
+        android:name="projekt.cloud.piece.pic.ui.search.SearchFragment"
+        tools:layout="@layout/fragment_search" />
 
 </navigation>
