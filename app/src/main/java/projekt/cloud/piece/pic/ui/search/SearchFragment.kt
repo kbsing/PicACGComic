@@ -58,7 +58,6 @@ class SearchFragment: Fragment() {
                 menu.clear()
                 menuInflater.inflate(R.menu.menu_search, menu)
                 (menu.findItem(R.id.action_search)?.actionView as? SearchView)?.let {
-                    it.queryHint = getString(R.string.search_title)
                     it.setIconifiedByDefault(false)
                     it.isIconified = false
                     it.removeIconAndFrame()
@@ -92,6 +91,11 @@ class SearchFragment: Fragment() {
                 }
             }
         }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
 }
