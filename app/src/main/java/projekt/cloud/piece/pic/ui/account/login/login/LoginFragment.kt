@@ -1,5 +1,6 @@
 package projekt.cloud.piece.pic.ui.account.login.login
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -8,6 +9,7 @@ import android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -112,6 +114,8 @@ class LoginFragment: Fragment() {
         linearProgressIndicator.hide()
         var isLoggingIn = false
         login.setOnClickListener {
+            (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .hideSoftInputFromWindow(root.windowToken, 0)
             if (isLoggingIn) {
                 return@setOnClickListener
             }
