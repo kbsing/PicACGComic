@@ -65,8 +65,9 @@
             android:id="@+id/floating_action_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_anchor="@id/bottom_app_bar"
             android:src="@drawable/ic_round_account_24"
+            android:transitionName="@string/account_transition"
+            app:layout_anchor="@id/bottom_app_bar"
             tools:ignore="ContentDescription" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

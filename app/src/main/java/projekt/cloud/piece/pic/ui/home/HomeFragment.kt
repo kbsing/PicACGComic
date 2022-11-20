@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.Hold
 import projekt.cloud.piece.pic.ApplicationConfigs
 import projekt.cloud.piece.pic.databinding.FragmentHomeBinding
@@ -23,6 +24,8 @@ class HomeFragment: Fragment(), OnClickListener {
     private val root get() = binding.root
     private val search: MaterialCardView
         get() = binding.materialCardViewSearch
+    private val floatingActionButton: FloatingActionButton
+        get() = binding.floatingActionButton
 
     private lateinit var navController: NavController
 
@@ -43,6 +46,7 @@ class HomeFragment: Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         search.setOnClickListener(this)
+        floatingActionButton.setOnClickListener(this)
     }
 
     override fun onDestroyView() {
@@ -55,6 +59,10 @@ class HomeFragment: Fragment(), OnClickListener {
             search -> navController.navigate(
                 HomeFragmentDirections.actionHomeToSearch(),
                 FragmentNavigatorExtras(search to search.transitionName)
+            )
+            floatingActionButton -> navController.navigate(
+                HomeFragmentDirections.actionHomeToAccount(),
+                FragmentNavigatorExtras(floatingActionButton to floatingActionButton.transitionName)
             )
         }
     }

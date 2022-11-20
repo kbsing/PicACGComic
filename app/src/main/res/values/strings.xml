@@ -6,4 +6,7 @@
     <string name="search_title">Search</string>
     <string name="search_transition">search_transition</string>
 
+    <string name="account_transition">account_transition</string>
+    <string name="account_title">Account</string>
+
 </resources>
