@@ -38,7 +38,6 @@ android {
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.5.1")
     implementation("com.google.android.material:material:1.8.0-alpha02")
@@ -46,6 +45,9 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
+    implementation("com.fasterxml.uuid:java-uuid-generator:4.0.1")
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.10")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.4")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
