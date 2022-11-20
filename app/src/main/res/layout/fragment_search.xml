@@ -1,25 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:transitionName="@string/search_transition"
-    android:background="?attr/colorSurface"
-    android:fitsSystemWindows="true"
-    app:statusBarBackground="?attr/colorSurface">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <data>
+        <variable
+            name="applicationConfigs"
+            type="projekt.cloud.piece.pic.ApplicationConfigs" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:transitionName="@string/search_transition"
+        android:background="?attr/colorSurface"
+        android:paddingTop="@{applicationConfigs.windowInsetTop}"
+        app:statusBarBackground="?attr/colorSurface">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/material_toolbar"
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="wrap_content">
 
-        </com.google.android.material.appbar.MaterialToolbar>
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/material_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
 
-    </com.google.android.material.appbar.AppBarLayout>
+            </com.google.android.material.appbar.MaterialToolbar>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

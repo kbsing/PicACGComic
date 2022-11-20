@@ -15,10 +15,12 @@ import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
+import projekt.cloud.piece.pic.ApplicationConfigs
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.databinding.FragmentSearchBinding
 
@@ -33,6 +35,8 @@ class SearchFragment: Fragment() {
     private val toolbar: MaterialToolbar
         get() = binding.materialToolbar
 
+    private val applicationConfigs: ApplicationConfigs by viewModels(ownerProducer = { requireActivity() })
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         navController = findNavController()
@@ -41,6 +45,8 @@ class SearchFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        binding.applicationConfigs = applicationConfigs
+        binding.lifecycleOwner = viewLifecycleOwner
         return root
     }
 
