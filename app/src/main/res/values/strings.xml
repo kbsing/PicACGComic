@@ -8,5 +8,7 @@
 
     <string name="account_transition">account_transition</string>
     <string name="account_title">Account</string>
+    <string name="account_logout_tab_login">Login</string>
+    <string name="account_logout_tab_register">Register</string>
 
 </resources>

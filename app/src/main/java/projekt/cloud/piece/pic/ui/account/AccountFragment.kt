@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.databinding.FragmentAccountBinding
-import projekt.cloud.piece.pic.ui.account.logout.AccountLogoutFragment
+import projekt.cloud.piece.pic.ui.account.login.AccountLoginFragment
 
 class AccountFragment: Fragment() {
 
@@ -28,7 +28,7 @@ class AccountFragment: Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val fragment = AccountLogoutFragment()
+        val fragment = AccountLoginFragment()
         childFragmentManager.beginTransaction()
             .add(R.id.fragment_container_view, fragment)
             .show(fragment)
