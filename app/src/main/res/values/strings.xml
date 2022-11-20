@@ -8,7 +8,9 @@
 
     <string name="account_transition">account_transition</string>
     <string name="account_title">Account</string>
-    <string name="account_logout_tab_login">Login</string>
-    <string name="account_logout_tab_register">Register</string>
-
+    <string name="account_login_tab_login">Login</string>
+    <string name="account_login_tab_register">Register</string>
+    <string name="account_login_account">Account ID / Email</string>
+    <string name="account_login_password">Password</string>
+    <string name="account_login_button_text">Login</string>
 </resources>

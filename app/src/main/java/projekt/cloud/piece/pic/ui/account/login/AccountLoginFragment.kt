@@ -60,7 +60,7 @@ class AccountLoginFragment: Fragment() {
             override fun getItemCount() = fragments.size
             override fun createFragment(position: Int) = fragments[position]
         }
-        arrayOf(R.string.account_logout_tab_login, R.string.account_logout_tab_register).let {
+        arrayOf(R.string.account_login_tab_login, R.string.account_login_tab_register).let {
             TabLayoutMediator(tabLayout, viewPager2) { tab, pos ->
                 tab.setText(it[pos])
             }.attach()
