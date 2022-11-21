@@ -5,11 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.Hold
@@ -22,6 +24,8 @@ class HomeFragment: Fragment(), OnClickListener {
     private val binding: FragmentHomeBinding
         get() = _binding!!
     private val root get() = binding.root
+    private val bottomAppBar: BottomAppBar
+        get() = binding.bottomAppBar
     private val search: MaterialCardView
         get() = binding.materialCardViewSearch
     private val floatingActionButton: FloatingActionButton
@@ -45,6 +49,7 @@ class HomeFragment: Fragment(), OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        (requireActivity() as AppCompatActivity).setSupportActionBar(bottomAppBar)
         search.setOnClickListener(this)
         floatingActionButton.setOnClickListener(this)
     }

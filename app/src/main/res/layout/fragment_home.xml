@@ -57,7 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:paddingBottom="@{applicationConfigs.windowInsetBottom}"
+            android:fitsSystemWindows="true"
             app:hideOnScroll="true"
             style="@style/Widget.Material3.BottomAppBar" />
 
@@ -67,6 +67,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_round_account_24"
             android:transitionName="@string/account_transition"
+            android:fitsSystemWindows="true"
             app:layout_anchor="@id/bottom_app_bar"
             tools:ignore="ContentDescription" />
 

@@ -9,7 +9,6 @@ import android.view.View
 import android.view.WindowManager
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsCompat.Type
 
 object DisplayUtil {
@@ -32,7 +31,7 @@ object DisplayUtil {
     fun View.getWindowInsets(block: (Insets) -> Unit) =
         ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
             block.invoke(insets.getInsets(Type.systemBars()))
-            WindowInsetsCompat.CONSUMED
+            insets
         }
 
 }
