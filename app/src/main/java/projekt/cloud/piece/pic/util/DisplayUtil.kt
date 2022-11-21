@@ -31,7 +31,7 @@ object DisplayUtil {
     @JvmStatic
     fun View.getWindowInsets(block: (Insets) -> Unit) =
         ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
-            block.invoke(insets.getInsets(Type.statusBars()))
+            block.invoke(insets.getInsets(Type.systemBars()))
             WindowInsetsCompat.CONSUMED
         }
 
