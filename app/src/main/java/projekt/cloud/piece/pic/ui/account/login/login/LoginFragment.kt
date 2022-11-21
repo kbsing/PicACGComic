@@ -66,6 +66,8 @@ class LoginFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        binding.applicationConfigs = applicationConfigs
+        binding.lifecycleOwner = viewLifecycleOwner
         return root
     }
 
