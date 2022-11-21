@@ -13,8 +13,11 @@ object HttpUtil {
     private val okHttpClient = OkHttpClient.Builder()
         .build()
 
-    private const val POST = "POST"
-    private const val GET = "GET"
+    const val POST = "POST"
+    const val GET = "GET"
+
+    const val RESPONSE_CODE_SUCCESS = 200
+    const val RESPONSE_CODE_BAD_REQUEST = 400
 
     private val requestBodyType =
         "application/json; charset=UTF-8".toMediaType()
@@ -32,13 +35,17 @@ object HttpUtil {
     private fun request(url: String,
                         method: String,
                         headers: Headers,
-                        requestBody: RequestBody? = null) =
+                        requestBody: RequestBody? = null
+    ) = try {
         okHttpClient.newCall(
             Request.Builder()
                 .url(url)
                 .headers(headers)
                 .method(method, requestBody)
                 .build()
-        ).execute().body.toString()
+        ).execute()
+    } catch (e: Exception) {
+        null
+    }
 
 }
