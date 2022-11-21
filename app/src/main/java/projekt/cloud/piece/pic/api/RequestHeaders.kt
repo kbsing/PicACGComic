@@ -41,10 +41,10 @@ object RequestHeaders {
                         method: String,
                         authorizedToken: String? = null) =
         headers.toMutableMap().also { headers ->
-            val nonceGenerator = Generators.timeBasedGenerator()
+            val time = (System.currentTimeMillis() / 1000).toString()
+            val nonce = Generators.timeBasedGenerator()
                 .generate()
-            val time = (nonceGenerator.timestamp() / 1000).toString()
-            val nonce = nonceGenerator.toString()
+                .toString()
                 .replace("-", "")
             headers[HEADER_TIME] = time
             headers[HEADER_NONCE] = nonce
