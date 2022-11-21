@@ -7,6 +7,7 @@ import androidx.core.view.WindowInsetsCompat.Type
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import projekt.cloud.piece.pic.util.StorageUtil.Account
 
 class ApplicationConfigs: ViewModel() {
 
@@ -24,6 +25,20 @@ class ApplicationConfigs: ViewModel() {
             _windowInsetBottom.value = insets.getInsets(Type.navigationBars()).bottom
             WindowInsetsCompat.CONSUMED
         }
+    }
+
+    private val _account = MutableLiveData<Account?>()
+    val account: LiveData<Account?>
+        get() = _account
+    fun setAccount(account: Account?) {
+        this._account.value = account
+    }
+
+    private val _token = MutableLiveData<String?>()
+    private val token: LiveData<String?>
+        get() = _token
+    fun updateToken(token: String?) {
+        _token.value = token
     }
 
 }
