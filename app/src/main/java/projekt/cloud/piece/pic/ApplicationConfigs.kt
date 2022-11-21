@@ -1,10 +1,8 @@
 package projekt.cloud.piece.pic
 
 import android.content.Context
+import android.graphics.Rect
 import android.view.View
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsCompat.Type
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,6 +14,8 @@ import projekt.cloud.piece.pic.api.ApiAuth.SignInResponseBody
 import projekt.cloud.piece.pic.api.ApiAuth.signIn
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
+import projekt.cloud.piece.pic.util.DisplayUtil.deviceBounds
+import projekt.cloud.piece.pic.util.DisplayUtil.getWindowInsets
 import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
 import projekt.cloud.piece.pic.util.StorageUtil.Account
 import projekt.cloud.piece.pic.util.StorageUtil.readAccount
@@ -48,11 +48,15 @@ class ApplicationConfigs: ViewModel() {
     val windowInsetBottom: LiveData<Int>
         get() = _windowInsetBottom
 
-    fun setUpWindowInsets(view: View) {
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            _windowInsetTop.value = insets.getInsets(Type.statusBars()).top
-            _windowInsetBottom.value = insets.getInsets(Type.navigationBars()).bottom
-            WindowInsetsCompat.CONSUMED
+    private val _deviceBounds = MutableLiveData<Rect>()
+    val deviceBounds: LiveData<Rect>
+        get() = _deviceBounds
+
+    fun setUpWindowProperties(view: View) {
+        _deviceBounds.value = view.context.deviceBounds
+        view.getWindowInsets {
+            _windowInsetTop.value = it.top
+            _windowInsetBottom.value = it.bottom
         }
     }
 

@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         val applicationConfigs: ApplicationConfigs by viewModels()
         with(applicationConfigs) {
             initializeAccount(this@MainActivity)
-            setUpWindowInsets(window.decorView)
+            setUpWindowProperties(window.decorView)
         }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
