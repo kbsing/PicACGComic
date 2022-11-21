@@ -5,7 +5,12 @@ import android.content.Context.WINDOW_SERVICE
 import android.graphics.Rect
 import android.os.Build
 import android.util.DisplayMetrics
+import android.view.View
 import android.view.WindowManager
+import androidx.core.graphics.Insets
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type
 
 object DisplayUtil {
 
@@ -22,5 +27,12 @@ object DisplayUtil {
             Rect(0, 0, widthPixels, heightPixels)
         }
     }
+
+    @JvmStatic
+    fun View.getWindowInsets(block: (Insets) -> Unit) =
+        ViewCompat.setOnApplyWindowInsetsListener(this) { _, insets ->
+            block.invoke(insets.getInsets(Type.statusBars()))
+            WindowInsetsCompat.CONSUMED
+        }
 
 }
