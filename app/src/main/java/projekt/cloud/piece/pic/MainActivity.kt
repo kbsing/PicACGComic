@@ -14,7 +14,10 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         val applicationConfigs: ApplicationConfigs by viewModels()
-        applicationConfigs.setUpWindowInsets(window.decorView)
+        with(applicationConfigs) {
+            initializeAccount(this@MainActivity)
+            setUpWindowInsets(window.decorView)
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
