@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
+    id("kotlinx-serialization")
 }
 
 android {
@@ -45,6 +46,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.5.3")
     implementation("androidx.navigation:navigation-ui-ktx:2.5.3")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.7.21")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.4.1")
     implementation("com.fasterxml.uuid:java-uuid-generator:4.0.1")
     implementation("com.squareup.okhttp3:okhttp:5.0.0-alpha.10")
     testImplementation("junit:junit:4.13.2")
