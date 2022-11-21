@@ -6,4 +6,6 @@ object PicApi {
 
     const val API_SIGN_IN = "auth/sign-in"
 
+    const val API_USER_PROFILE = "users/profile"
+
 }
