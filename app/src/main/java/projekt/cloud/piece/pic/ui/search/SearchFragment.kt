@@ -12,10 +12,10 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
-import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
@@ -58,29 +58,38 @@ class SearchFragment: Fragment() {
                 navController.navigateUp()
             }
         }
-
-        (requireActivity() as MenuHost).addMenuProvider(object: MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menu.clear()
-                menuInflater.inflate(R.menu.menu_search, menu)
-                (menu.findItem(R.id.action_search)?.actionView as? SearchView)?.let {
-                    it.setIconifiedByDefault(false)
-                    it.isIconified = false
-                    it.removeIconAndFrame()
-                    it.setOnQueryTextListener(object : OnQueryTextListener {
-                        override fun onQueryTextSubmit(query: String?): Boolean {
-                            return true
+        /**
+         * ComponentActivity.addMenuProvider(MenuProvider, LifecycleOwner) might cause
+         * showing of soft keyboard because of onDestroy() is called after
+         * previous fragment's onResume()
+         *
+         * However, onStop() is called before both previous fragment's onResume() and
+         * this fragment's onDestroy()
+         **/
+        requireActivity().addMenuProvider(
+                object: MenuProvider {
+                    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                        menu.clear()
+                        menuInflater.inflate(R.menu.menu_search, menu)
+                        (menu.findItem(R.id.action_search)?.actionView as? SearchView)?.let {
+                            it.setIconifiedByDefault(false)
+                            it.isIconified = false
+                            it.removeIconAndFrame()
+                            it.setOnQueryTextListener(object : OnQueryTextListener {
+                                override fun onQueryTextSubmit(query: String?): Boolean {
+                                    return true
+                                }
+                                override fun onQueryTextChange(newText: String?): Boolean {
+                                    return true
+                                }
+                            })
                         }
-                        override fun onQueryTextChange(newText: String?): Boolean {
-                            return true
-                        }
-                    })
-                }
-            }
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                return false
-            }
-        })
+                    }
+                    override fun onMenuItemSelected(menuItem: MenuItem) = false
+                },
+                viewLifecycleOwner,
+                Lifecycle.State.STARTED
+        )
     }
 
     private fun SearchView.removeIconAndFrame() {
