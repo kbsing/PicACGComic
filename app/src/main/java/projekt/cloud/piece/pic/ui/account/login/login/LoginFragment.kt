@@ -11,13 +11,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.Job
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.decodeFromString
+import projekt.cloud.piece.pic.ApplicationConfigs
 import projekt.cloud.piece.pic.R
+import projekt.cloud.piece.pic.api.ApiAuth
+import projekt.cloud.piece.pic.api.ApiAuth.signIn
 import projekt.cloud.piece.pic.databinding.FragmentLoginBinding
+import projekt.cloud.piece.pic.ui.account.detail.AccountDetailFragment
+import projekt.cloud.piece.pic.util.CoroutineUtil.io
+import projekt.cloud.piece.pic.util.CoroutineUtil.ui
+import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_BAD_REQUEST
+import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
+import projekt.cloud.piece.pic.util.SnackUtil.showSnack
+import projekt.cloud.piece.pic.util.StorageUtil.Account
+import projekt.cloud.piece.pic.util.StorageUtil.saveAccount
 
 class LoginFragment: Fragment() {
 
@@ -42,6 +58,12 @@ class LoginFragment: Fragment() {
     private val login: MaterialButton
         get() = binding.materialButtonLogin
 
+    private val applicationConfigs: ApplicationConfigs by viewModels(
+        ownerProducer = { requireActivity() }
+    )
+
+    private var job: Job? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return root
@@ -50,7 +72,7 @@ class LoginFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         val inputFilters = arrayOf(
-            InputFilter { source, start, end, dest, dstart, dend ->
+            InputFilter { source, _, _, _, _, _ ->
                 when {
                     source.matches(regex) -> source
                     else -> EMPTY_STR
@@ -108,18 +130,20 @@ class LoginFragment: Fragment() {
                 }
             }
 
-
         }
 
         linearProgressIndicator.hide()
-        var isLoggingIn = false
         login.setOnClickListener {
             (requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(root.windowToken, 0)
-            if (isLoggingIn) {
+            if (job != null) {
                 return@setOnClickListener
             }
-            isLoggingIn = true
+            job = account.editText?.text?.toString()?.let { account ->
+                password.editText?.text?.toString()?.let { password ->
+                    getAuth(account, password)
+                }
+            }
             linearProgressIndicator.show()
         }
     }
@@ -133,5 +157,45 @@ class LoginFragment: Fragment() {
 
     private fun checkIfFilled(account: String?, password: String?) =
         !account.isNullOrBlank() && !password.isNullOrBlank() && password.length >= PASSWORD_MIN_LENGTH
+
+    private fun getAuth(account: String, password: String) = io {
+        when (val response = signIn(account, password)) {
+            null -> authError(R.string.account_login_snack_auth_exception)
+            else -> when (response.code) {
+                RESPONSE_CODE_SUCCESS -> {
+                    authSuccess(
+                        Json.decodeFromString<ApiAuth.SignInResponseBody>(response.body.string()).token,
+                        requireContext().saveAccount(account, password)
+                    )
+                }
+                RESPONSE_CODE_BAD_REQUEST -> authError(R.string.account_login_snack_auth_invalid)
+                else -> authError(getString(R.string.account_login_snack_auth_error_code) + response.code)
+            }
+        }
+        job = null
+    }
+
+    private fun authError(@StringRes resId: Int) = authCompleteTask(getString(resId))
+
+    private fun authError(message: String) = authCompleteTask(message)
+
+    private fun authSuccess(token: String, account: Account) = authCompleteTask(null) {
+        with(applicationConfigs) {
+            updateToken(token)
+            setAccount(account)
+        }
+        val accountDetailFragment = AccountDetailFragment()
+        requireParentFragment()                         // AccountFragment
+            .parentFragmentManager.beginTransaction()   // FragmentAccountBinding's FragmentManager
+            .replace(R.id.fragment_container_view, accountDetailFragment)
+            .show(accountDetailFragment)
+            .commit()
+    }
+
+    private fun authCompleteTask(message: String?, block: (() -> Unit)? = null) = ui {
+        message?.let { root.showSnack(it) }
+        linearProgressIndicator.hide()
+        block?.invoke()
+    }
 
 }
