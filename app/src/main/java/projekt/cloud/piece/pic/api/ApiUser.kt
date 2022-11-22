@@ -30,6 +30,7 @@ object ApiUser {
                 val isPunched: Boolean,
                 val level: Int,
                 val name: String,
+                val slogan: String = "",
                 val title: String,
                 val verified: Boolean,
                 val avatar: Avatar) {
@@ -47,7 +48,7 @@ object ApiUser {
 
     }
 
-    fun profile(token: String) =
+    fun userProfile(token: String) =
         httpGet(API_URL + API_USER_PROFILE, generateHeaders(API_USER_PROFILE, GET, token))
 
 }
