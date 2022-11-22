@@ -1,5 +1,6 @@
 package projekt.cloud.piece.pic.util
 
+import android.util.Log
 import okhttp3.Headers
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
@@ -45,6 +46,7 @@ object HttpUtil {
                 .build()
         ).execute()
     } catch (e: Exception) {
+        Log.e("HttpUtil.request", "url=${url} method=$method e:$e")
         null
     }
 

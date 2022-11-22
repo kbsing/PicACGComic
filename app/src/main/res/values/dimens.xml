@@ -4,6 +4,10 @@
     <dimen name="md_spec_spacing_hor_8">8dp</dimen>
     <dimen name="md_spec_spacing_hor_16">16dp</dimen>
     <dimen name="md_spec_spacing_ver_8">8dp</dimen>
+    <dimen name="md_spec_spacing_ver_16">16dp</dimen>
+    <dimen name="md_spec_fab_spacing_top">12dp</dimen>
+    <dimen name="md_spec_fab_spacing_bottom">16dp</dimen>
+    <dimen name="md_spec_fab_spacing_end">16dp</dimen>
 
     <dimen name="home_search_height">48dp</dimen>
     <dimen name="home_search_radius">24dp</dimen>

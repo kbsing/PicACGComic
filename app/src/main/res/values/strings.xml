@@ -16,6 +16,11 @@
     <string name="account_login_snack_auth_exception">Exception Occurs</string>
     <string name="account_login_snack_auth_invalid">Invalid Account ID / Email or Password</string>
     <string name="account_login_snack_auth_error_code">Error Occurs with response code </string>
+    <string name="account_detail_id">Account ID</string>
+    <string name="account_detail_title">Account Title</string>
+    <string name="account_detail_birthday">Birthday</string>
+    <string name="account_detail_level">Level</string>
+    <string name="account_detail_slogan">Slogan</string>
 
     <string name="storage_account">storage_account</string>
 
