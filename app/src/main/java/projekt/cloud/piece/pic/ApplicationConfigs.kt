@@ -44,13 +44,20 @@ class ApplicationConfigs: ViewModel() {
     val windowInsetTop: LiveData<Int>
         get() = _windowInsetTop
 
+    private val _windowInsetBottom = MutableLiveData<Int>()
+    val windowInsetBottom: LiveData<Int>
+        get() = _windowInsetBottom
+
     private val _deviceBounds = MutableLiveData<Rect>()
     val deviceBounds: LiveData<Rect>
         get() = _deviceBounds
 
     fun setUpWindowProperties(view: View) {
         _deviceBounds.value = view.context.deviceBounds
-        view.getWindowInsets { _windowInsetTop.value = it.top }
+        view.getWindowInsets {
+            _windowInsetTop.value = it.top
+            _windowInsetBottom.value = it.bottom
+        }
     }
 
     private val _account = MutableLiveData<Account?>()

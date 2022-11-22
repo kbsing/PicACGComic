@@ -6,6 +6,10 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.marginBottom
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updateMargins
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -45,6 +49,14 @@ class HomeFragment: Fragment(), OnClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         binding.applicationConfigs = applicationConfigs
         binding.lifecycleOwner = viewLifecycleOwner
+
+        val floatingActionButtonMarginBottom = floatingActionButton.marginBottom
+        applicationConfigs.windowInsetBottom.observe(viewLifecycleOwner) {
+            floatingActionButton.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                updateMargins(bottom = floatingActionButtonMarginBottom + it)
+            }
+        }
+
         return root
     }
 
