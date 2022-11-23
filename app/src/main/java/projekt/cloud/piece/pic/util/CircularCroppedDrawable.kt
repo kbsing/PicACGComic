@@ -11,24 +11,20 @@ import android.graphics.Shader.TileMode.CLAMP
 import android.graphics.drawable.Drawable
 import androidx.core.graphics.toRectF
 
-class CircularCroppedDrawable(private val bitmap: Bitmap?): Drawable() {
+class CircularCroppedDrawable(private val bitmap: Bitmap): Drawable() {
 
     private val paint = Paint().apply {
         isAntiAlias = true
     }
 
     override fun draw(canvas: Canvas) {
-        bitmap?.let {
-            paint.shader = BitmapShader(bitmap, CLAMP, CLAMP)
-            val radius = bounds.height() / 2F
-            canvas.drawRoundRect(bounds.toRectF(), radius, radius, paint)
-        }
+        paint.shader = BitmapShader(bitmap, CLAMP, CLAMP)
+        val radius = bounds.height() / 2F
+        canvas.drawRoundRect(bounds.toRectF(), radius, radius, paint)
     }
 
     override fun setBounds(bounds: Rect) {
-        bitmap?.let {
-            super.setBounds(Rect(0, 0, bitmap.width, bitmap.height))
-        }
+        super.setBounds(Rect(0, 0, bitmap.width, bitmap.height))
     }
 
     override fun setAlpha(alpha: Int) = Unit
@@ -39,11 +35,11 @@ class CircularCroppedDrawable(private val bitmap: Bitmap?): Drawable() {
     override fun getOpacity() = TRANSPARENT
 
     override fun getIntrinsicWidth(): Int {
-        return bitmap?.width ?: super.getIntrinsicWidth()
+        return bitmap.width
     }
 
     override fun getIntrinsicHeight(): Int {
-        return bitmap?.height ?: super.getIntrinsicHeight()
+        return bitmap.height
     }
 
 }

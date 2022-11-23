@@ -131,7 +131,7 @@ class AccountDetailFragment: Fragment() {
             }
         }
         accountDetail.avatar.observe(viewLifecycleOwner) { bitmap ->
-            toolbar.logo = CircularCroppedDrawable(bitmap)
+            toolbar.logo = bitmap?.let { CircularCroppedDrawable(it) }
             if (toolbarImageView == null) {
                 toolbarImageView = Toolbar::class.java
                     .declaredFields
