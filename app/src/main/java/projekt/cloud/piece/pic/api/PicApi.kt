@@ -8,4 +8,6 @@ object PicApi {
 
     const val API_USER_PROFILE = "users/profile"
 
+    const val API_CATEGORIES = "categories"
+
 }
