@@ -42,7 +42,8 @@
                 android:layout_marginVertical="@dimen/md_spec_spacing_ver_8"
                 android:maxLines="2"
                 android:text="@{category.title}"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:textColor="?attr/colorOnSurfaceVariant" />
 
         </RelativeLayout>
 
