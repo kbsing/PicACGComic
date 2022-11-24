@@ -13,11 +13,11 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.transition.platform.MaterialFadeThrough
 import kotlinx.coroutines.Job
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
@@ -26,6 +26,7 @@ import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiAuth
 import projekt.cloud.piece.pic.api.ApiAuth.signIn
 import projekt.cloud.piece.pic.databinding.FragmentLoginBinding
+import projekt.cloud.piece.pic.ui.account.base.BaseAccountFragment
 import projekt.cloud.piece.pic.ui.account.detail.AccountDetailFragment
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
@@ -35,7 +36,7 @@ import projekt.cloud.piece.pic.util.SnackUtil.showSnack
 import projekt.cloud.piece.pic.util.StorageUtil.Account
 import projekt.cloud.piece.pic.util.StorageUtil.saveAccount
 
-class LoginFragment: Fragment() {
+class LoginFragment: BaseAccountFragment() {
 
     private companion object {
         val EMAIL_REGEX = "([0-9a-zA-Z]+.)*[0-9a-zA-Z]+@([0-9a-zA-Z].)+.([0-9a-zA-Z])+".toRegex()
@@ -186,12 +187,9 @@ class LoginFragment: Fragment() {
             updateToken(token)
             setAccount(account)
         }
-        val accountDetailFragment = AccountDetailFragment()
-        requireParentFragment()                         // AccountFragment
-            .parentFragmentManager.beginTransaction()   // FragmentAccountBinding's FragmentManager
-            .replace(R.id.fragment_container_view, accountDetailFragment)
-            .show(accountDetailFragment)
-            .commit()
+
+        requireParentFragment().exitTransition = MaterialFadeThrough()
+        transactionTo(AccountDetailFragment(), MaterialFadeThrough())
     }
 
     private fun authCompleteTask(message: String?, block: (() -> Unit)? = null) = ui {
