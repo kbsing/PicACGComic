@@ -24,14 +24,14 @@ object ApiComics {
         data class Data(val comics: Comics) {
 
             @Serializable
-            data class Comics(val docs: List<Docs>,
+            data class Comics(val docs: List<Doc>,
                               val total: Int,
                               val limit: Int,
                               val page: Int,
                               val pages: Int) {
 
                 @Serializable
-                data class Docs(
+                data class Doc(
                     val _id: String,
                     val title: String,
                     val author: String,
