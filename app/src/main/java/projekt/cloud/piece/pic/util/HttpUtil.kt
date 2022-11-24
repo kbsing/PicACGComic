@@ -36,10 +36,8 @@ object HttpUtil {
     private val requestBodyType =
         "application/json; charset=UTF-8".toMediaType()
 
-    fun httpGet(url: String,
-                headers: Map<String, String> = mapOf(),
-                requestBody: String? = null) =
-        request(url, GET, headers.toHeaders(), requestBody?.toRequestBody(requestBodyType))
+    fun httpGet(url: String, headers: Map<String, String> = mapOf()) =
+        request(url, GET, headers.toHeaders())
 
     fun httpPost(url: String,
                 headers: Map<String, String> = mapOf(),
