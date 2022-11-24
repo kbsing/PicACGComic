@@ -2,7 +2,6 @@ package projekt.cloud.piece.pic.ui.home
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import projekt.cloud.piece.pic.api.ApiCategories.CategoriesResponseBody.Data.Category
-import projekt.cloud.piece.pic.api.ApiCategories.thumb
+import projekt.cloud.piece.pic.api.CommonBody.bitmap
 import projekt.cloud.piece.pic.databinding.LayoutRecyclerHomeBinding
 import projekt.cloud.piece.pic.ui.home.RecyclerViewAdapter.RecyclerViewHolder
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
@@ -37,9 +36,7 @@ class RecyclerViewAdapter(private val onClick: (Category) -> Unit): RecyclerView
                 var bitmap = thumbs[category.title]
                 if (bitmap == null) {
                     bitmap = withContext(io) {
-                        thumb(category)?.body?.byteStream()?.let {
-                            BitmapFactory.decodeStream(it)
-                        }
+                        category.thumb.bitmap
                     }
                     bitmap?.let { thumbs[category.title] = it }
                 }

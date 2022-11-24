@@ -10,8 +10,6 @@ import projekt.cloud.piece.pic.util.HttpUtil.httpGet
 
 object ApiCategories {
 
-    private const val THUMB_URL_DIVIDER = "/static/"
-
     @Serializable
     data class CategoriesResponseBody(val code: Int, val message: String, val data: Data) {
 
@@ -33,13 +31,5 @@ object ApiCategories {
 
     fun categories(token: String) =
         httpGet(API_URL + API_CATEGORIES, generateHeaders(API_CATEGORIES, GET, token))
-
-    fun thumb(category: CategoriesResponseBody.Data.Category) =
-        httpGet(category.thumb.fileServer.run {
-            when {
-                this.contains(THUMB_URL_DIVIDER) -> this
-                else -> "$this$THUMB_URL_DIVIDER"
-            }
-        } + category.thumb.path)
-
+    
 }
