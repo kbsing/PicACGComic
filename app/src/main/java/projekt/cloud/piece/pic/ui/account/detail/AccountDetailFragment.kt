@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,20 +25,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import projekt.cloud.piece.pic.ApplicationConfigs
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiUser.ProfileResponseBody
 import projekt.cloud.piece.pic.api.ApiUser.userProfile
+import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentAccountDetailBinding
 import projekt.cloud.piece.pic.util.CircularCroppedDrawable
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.HttpUtil.httpGet
 
-class AccountDetailFragment: Fragment() {
-
-    private val applicationConfigs: ApplicationConfigs by viewModels(
-        ownerProducer = { requireActivity() }
-    )
+class AccountDetailFragment: BaseFragment() {
 
     class AccountDetail: ViewModel() {
 

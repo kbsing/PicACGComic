@@ -13,7 +13,6 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.viewModels
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
@@ -21,7 +20,6 @@ import com.google.android.material.transition.platform.MaterialFadeThrough
 import kotlinx.coroutines.Job
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.decodeFromString
-import projekt.cloud.piece.pic.ApplicationConfigs
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiAuth
 import projekt.cloud.piece.pic.api.ApiAuth.signIn
@@ -58,10 +56,6 @@ class LoginFragment: BaseAccountFragment() {
         get() = binding.textInputLayoutPassword
     private val login: MaterialButton
         get() = binding.materialButtonLogin
-
-    private val applicationConfigs: ApplicationConfigs by viewModels(
-        ownerProducer = { requireActivity() }
-    )
 
     private var job: Job? = null
 

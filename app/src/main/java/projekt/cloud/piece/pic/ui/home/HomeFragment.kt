@@ -11,8 +11,6 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -26,15 +24,15 @@ import com.google.android.material.transition.platform.Hold
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import projekt.cloud.piece.pic.ApplicationConfigs
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiCategories.CategoriesResponseBody
 import projekt.cloud.piece.pic.api.ApiCategories.categories
+import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentHomeBinding
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 
-class HomeFragment: Fragment(), OnClickListener {
+class HomeFragment: BaseFragment(), OnClickListener {
 
     companion object {
         private const val RECYCLER_VIEW_MAX_SPAN = 2
@@ -54,9 +52,7 @@ class HomeFragment: Fragment(), OnClickListener {
         get() = binding.recyclerView
 
     private lateinit var navController: NavController
-
-    private val applicationConfigs: ApplicationConfigs by viewModels(ownerProducer = { requireActivity() })
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         exitTransition = Hold()
