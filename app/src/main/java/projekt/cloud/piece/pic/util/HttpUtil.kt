@@ -1,7 +1,6 @@
 package projekt.cloud.piece.pic.util
 
 import android.util.Log
-import java.net.URLEncoder
 import okhttp3.Headers
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.MediaType.Companion.toMediaType
@@ -21,17 +20,11 @@ object HttpUtil {
     const val RESPONSE_CODE_SUCCESS = 200
     const val RESPONSE_CODE_BAD_REQUEST = 400
 
-    val Map<String, String>.asParams
-        get() = StringBuilder().also { stringBuilder ->
-            if (this.isNotEmpty()) {
-                stringBuilder.append('?')
-                forEach { (key, value) ->
-                    stringBuilder.append(URLEncoder.encode(key, Charsets.UTF_8.name()))
-                        .append('=')
-                        .append(URLEncoder.encode(value, Charsets.UTF_8.name()))
-                }
-            }
-        }.toString()
+    val Map<String, Any>.asParams
+        get() = when {
+            isNotEmpty() -> toList().joinToString(prefix = "?", separator = "&") { it.first + '=' + it.second }
+            else -> ""
+        }
 
     private val requestBodyType =
         "application/json; charset=UTF-8".toMediaType()
