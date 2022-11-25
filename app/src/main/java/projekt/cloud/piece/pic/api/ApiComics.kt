@@ -53,7 +53,7 @@ object ApiComics {
     }
 
     private fun comicsParams(page: Int, category: String, sort: String) =
-        mapOf(PARAM_PAGE to page.toString(), PARAM_CATEGORY to category, PARAM_SORT to sort).asParams
+        mapOf(PARAM_PAGE to page.toString(), PARAM_CATEGORY to URLEncoder.encode(category, Charsets.UTF_8.name()), PARAM_SORT to sort).asParams
 
     fun comics(token: String, page: Int, category: String, sort: String) =
         (API_COMICS + comicsParams(page, category, sort)).let {
