@@ -80,7 +80,7 @@ class HomeFragment: BaseFragment(), OnClickListener {
         floatingActionButton.setOnClickListener(this)
 
         val recyclerViewAdapter = RecyclerViewAdapter {
-
+            navController.navigate(HomeFragmentDirections.actionHomeToList(category = it.title))
         }
         recyclerView.adapter = recyclerViewAdapter
         recyclerView.layoutManager = GridLayoutManager(requireContext(), RECYCLER_VIEW_MAX_SPAN)

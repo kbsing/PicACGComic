@@ -48,21 +48,25 @@ class RecyclerViewAdapter(private val onClick: (Doc) -> Unit):
     }
     
     private var docSize = 0
-    var docs: List<Doc>? = null
-        set(value) {
-            field = value
-            docSize = field?.size ?: 0
-            @Suppress("NotifyDataSetChanged")
-            notifyDataSetChanged()
-        }
+    private val docs = arrayListOf<Doc>()
+
+    fun addNewDocs(newDocs: List<Doc>) {
+        docs.addAll(newDocs)
+        notifyItemRangeInserted(docSize, newDocs.size)
+        docSize += newDocs.size
+    }
+
+    fun clearAll() {
+        notifyItemRangeRemoved(0, docSize)
+        docs.clear()
+        docSize = 0
+    }
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         RecyclerViewHolder(parent)
     
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        docs?.get(position)?.let {
-            holder.setDoc(it)
-        }
+        holder.setDoc(docs[position])
     }
     
     override fun getItemCount() = docSize
