@@ -1,5 +1,6 @@
 package projekt.cloud.piece.pic.api
 
+import java.net.URLEncoder
 import kotlinx.serialization.Serializable
 import projekt.cloud.piece.pic.api.CommonBody.Thumb
 import projekt.cloud.piece.pic.api.PicApi.API_COMICS
@@ -35,14 +36,14 @@ object ApiComics {
                     val _id: String,
                     val title: String,
                     val author: String,
-                    val totalViews: Int,
-                    val totalLikes: Int,
+                    val totalViews: Int = -1,
+                    val totalLikes: Int = -1,
                     val pagesCount: Int,
                     val epsCount: Int,
                     val finished: Boolean,
                     val categories: List<String>,
                     val thumb: Thumb,
-                    val id: String,
+                    val id: String = "",
                     val likesCount: Int
                 )
 
