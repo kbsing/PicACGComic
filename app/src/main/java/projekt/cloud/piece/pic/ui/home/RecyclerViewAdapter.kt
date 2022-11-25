@@ -2,7 +2,6 @@ package projekt.cloud.piece.pic.ui.home
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -32,7 +31,6 @@ class RecyclerViewAdapter(private val onClick: (Category) -> Unit): RecyclerView
             binding.root.setOnClickListener(this)
             job?.cancel()
             job = ui {
-                Log.e("setCategory", category.title)
                 var bitmap = thumbs[category.title]
                 if (bitmap == null) {
                     bitmap = withContext(io) {
