@@ -67,10 +67,13 @@ class ListFragment: BaseFragment() {
         recyclerView.adapter = recyclerViewAdapter
         recyclerView.layoutManager = StaggeredGridLayoutManager(GRID_SPAN, VERTICAL)
 
-        val spacingOuterHor = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_hor_8)
+        val spacingOuterHor = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_hor_16)
         val spacingInnerHor = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_hor_4)
-        val spacingInnerVer = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_ver_8)
-
+        val spacingOuterVer = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_ver_8)
+        var bottomInset = 0
+        applicationConfigs.windowInsetBottom.value?.let {
+            bottomInset = it
+        }
         recyclerView.addItemDecoration(object : ItemDecoration() {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: State) {
                 super.getItemOffsets(outRect, view, parent, state)
@@ -84,6 +87,12 @@ class ListFragment: BaseFragment() {
                         outRect.left = spacingInnerHor
                         outRect.right = spacingOuterHor
                     }
+                }
+                val itemCount = recyclerViewAdapter.itemCount
+                outRect.bottom = when {
+                    itemCount % GRID_SPAN == 0 && pos >= itemCount - GRID_SPAN -> bottomInset
+                    pos == itemCount - 1 -> bottomInset
+                    else -> spacingOuterVer
                 }
             }
         })
