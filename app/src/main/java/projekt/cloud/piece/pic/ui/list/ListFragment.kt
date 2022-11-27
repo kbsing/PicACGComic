@@ -5,11 +5,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.recyclerview.widget.RecyclerView.State
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import kotlinx.coroutines.Job
 import kotlinx.serialization.decodeFromString
@@ -22,6 +25,7 @@ import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentListBinding
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
+import projekt.cloud.piece.pic.util.FragmentUtil.setSupportActionBar
 
 class ListFragment: BaseFragment() {
 
@@ -38,15 +42,17 @@ class ListFragment: BaseFragment() {
     private val binding: FragmentListBinding
         get() = _binding!!
     private val root get() = binding.root
+    private val toolbar: MaterialToolbar
+        get() = binding.materialToolbar
     private val recyclerView: RecyclerView
         get() = binding.recyclerView
 
     private var sort = SORT_NEW_TO_OLD
 
-    private lateinit var category: String
+    private var category: String? = null
     private var comicsResponseBody = arrayListOf<ComicsResponseBody>()
 
-    private lateinit var keyword: String
+    private var keyword: String? = null
 
     private var job: Job? = null
 
@@ -65,6 +71,12 @@ class ListFragment: BaseFragment() {
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setSupportActionBar(toolbar)
+        toolbar.setupWithNavController(findNavController())
+        val category = category
+        when {
+            !category.isNullOrBlank() -> toolbar.title = category
+        }
         val recyclerViewAdapter = RecyclerViewAdapter {
         }
         recyclerView.adapter = recyclerViewAdapter
@@ -109,9 +121,13 @@ class ListFragment: BaseFragment() {
         }
     }
 
-    private fun startRequest() = when {
-        category.isNotBlank() -> requestComic(category, comicsResponseBody.size + 1)
-        else -> null
+    private fun startRequest(): ComicsResponseBody? {
+        val category = category
+        val keyword = keyword
+        return when {
+            !category.isNullOrBlank() -> requestComic(category, comicsResponseBody.size + 1)
+            else -> null
+        }
     }
 
     private fun requestComic(category: String, page: Int) =
@@ -121,5 +137,10 @@ class ListFragment: BaseFragment() {
             ?.body
             ?.string()
             ?.let { Json.decodeFromString<ComicsResponseBody>(it) }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
     
 }
