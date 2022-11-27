@@ -29,6 +29,9 @@
                 app:argType="string"
                 app:nullable="true"
                 android:defaultValue="@null" />
+            <argument
+                android:name="list_transition"
+                app:argType="string" />
         </action>
     </fragment>
 

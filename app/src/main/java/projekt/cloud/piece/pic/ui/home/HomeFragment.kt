@@ -1,5 +1,6 @@
 package projekt.cloud.piece.pic.ui.home
 
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +9,12 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -21,11 +25,11 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.Hold
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiCategories.CategoriesResponseBody
+import projekt.cloud.piece.pic.api.ApiCategories.CategoriesResponseBody.Data.Category
 import projekt.cloud.piece.pic.api.ApiCategories.categories
 import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentHomeBinding
@@ -36,6 +40,13 @@ class HomeFragment: BaseFragment(), OnClickListener {
 
     companion object {
         private const val RECYCLER_VIEW_MAX_SPAN = 2
+    }
+
+    class Categories: ViewModel() {
+
+        val categories = mutableListOf<Category>()
+        val thumbs = mutableMapOf<String, Bitmap?>()
+
     }
 
     private var _binding: FragmentHomeBinding? = null
@@ -52,6 +63,8 @@ class HomeFragment: BaseFragment(), OnClickListener {
         get() = binding.recyclerView
 
     private lateinit var navController: NavController
+
+    private val categories: Categories by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +84,7 @@ class HomeFragment: BaseFragment(), OnClickListener {
             }
         }
 
+        postponeEnterTransition()
         return root
     }
 
@@ -79,17 +93,21 @@ class HomeFragment: BaseFragment(), OnClickListener {
         search.setOnClickListener(this)
         floatingActionButton.setOnClickListener(this)
 
-        val recyclerViewAdapter = RecyclerViewAdapter {
-            navController.navigate(HomeFragmentDirections.actionHomeToList(category = it.title))
+        val recyclerViewAdapter = RecyclerViewAdapter(categories.categories, categories.thumbs) { category, v ->
+            navController.navigate(
+                HomeFragmentDirections.actionHomeToList(category = category.title, listTransition = v.transitionName),
+                FragmentNavigatorExtras(v to v.transitionName)
+            )
         }
         recyclerView.adapter = recyclerViewAdapter
         recyclerView.layoutManager = GridLayoutManager(requireContext(), RECYCLER_VIEW_MAX_SPAN)
+        recyclerView.doOnPreDraw { startPostponedEnterTransition() }
 
         val spacingOuterHor = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_hor_8)
         val spacingInnerHor = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_hor_4)
         val spacingInnerVer = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_ver_8)
         recyclerView.addItemDecoration(
-            object: RecyclerView.ItemDecoration() {
+            object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: State) {
                     super.getItemOffsets(outRect, view, parent, state)
 
@@ -115,19 +133,31 @@ class HomeFragment: BaseFragment(), OnClickListener {
             }
         )
 
-        applicationConfigs.token.observe(viewLifecycleOwner) { token ->
-            token?.let {
-                ui {
-                    recyclerViewAdapter.categories = withContext(io) {
-                        categories(token)?.body
-                            ?.string()
-                            ?.let { json -> Json.decodeFromString<CategoriesResponseBody>(json) }
-                            ?.data
-                            ?.categories
-                            ?.filter { !it.isWeb }
-                    }
+        applicationConfigs.token.observe(viewLifecycleOwner) {
+            when {
+                it == null -> {
+                    categories.categories.clear()
+                    @Suppress("NotifyDataSetChanged")
+                    (recyclerView.adapter as RecyclerViewAdapter)
+                        .notifyDataSetChanged()
+                }
+                categories.categories.isEmpty() -> io {
+                    categories(it)?.body?.string()?.let { json ->
+                        Json.decodeFromString<CategoriesResponseBody>(json)
+                    }?.data?.categories?.filter { category ->
+                        !category.isWeb
+                    }?.let { categories -> updateCategories(categories) }
                 }
             }
+        }
+    }
+
+    private fun updateCategories(categoryList: List<Category>) {
+        categories.categories.addAll(categoryList)
+        ui {
+            @Suppress("NotifyDataSetChanged")
+            (recyclerView.adapter as RecyclerViewAdapter)
+                .notifyDataSetChanged()
         }
     }
 

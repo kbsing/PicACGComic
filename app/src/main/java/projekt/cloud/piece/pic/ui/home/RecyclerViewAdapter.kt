@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiCategories.CategoriesResponseBody.Data.Category
 import projekt.cloud.piece.pic.api.CommonBody.bitmap
 import projekt.cloud.piece.pic.databinding.LayoutRecyclerHomeBinding
@@ -16,7 +17,9 @@ import projekt.cloud.piece.pic.ui.home.RecyclerViewAdapter.RecyclerViewHolder
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 
-class RecyclerViewAdapter(private val onClick: (Category) -> Unit): RecyclerView.Adapter<RecyclerViewHolder>() {
+class RecyclerViewAdapter(private val categories: List<Category>,
+                          private val thumbs: MutableMap<String, Bitmap?>,
+                          private val onClick: (Category, View) -> Unit): RecyclerView.Adapter<RecyclerViewHolder>() {
 
     inner class RecyclerViewHolder(private val binding: LayoutRecyclerHomeBinding):
         RecyclerView.ViewHolder(binding.root), OnClickListener {
@@ -26,48 +29,36 @@ class RecyclerViewAdapter(private val onClick: (Category) -> Unit): RecyclerView
 
         private var job: Job? = null
 
-        fun setCategory(category: Category, thumbs: MutableMap<String, Bitmap>) {
+        fun setCategory(category: Category, thumbs: MutableMap<String, Bitmap?>) {
             binding.category = category
+            binding.root.transitionName = binding.root.resources.getString(R.string.list_transition_prefix) + category.title
             binding.root.setOnClickListener(this)
-            job?.cancel()
+            // job?.cancel()
             job = ui {
-                var bitmap = thumbs[category.title]
-                if (bitmap == null) {
-                    bitmap = withContext(io) {
+                if (!thumbs.containsKey(category.title)) {
+                    val bitmap = withContext(io) {
                         category.thumb.bitmap
                     }
-                    bitmap?.let { thumbs[category.title] = it }
+                    thumbs[category.title] = bitmap
                 }
-                binding.bitmap = bitmap
+                binding.bitmap = thumbs[category.title]
                 job = null
             }
         }
 
-        override fun onClick(v: View?) {
-            binding.category?.let { onClick.invoke(it) }
+        override fun onClick(v: View) {
+            binding.category?.let { onClick.invoke(it, v) }
         }
 
     }
-
-    var categories: List<Category>? = null
-        set(value) {
-            thumbs.clear()
-            field = value
-            @Suppress("NotifyDataSetChanged")
-            notifyDataSetChanged()
-        }
-
-    private var thumbs = mutableMapOf<String, Bitmap>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         RecyclerViewHolder(parent)
 
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        categories?.get(position)?.let {
-            holder.setCategory(it, thumbs)
-        }
+        holder.setCategory(categories[position], thumbs)
     }
 
-    override fun getItemCount() = categories?.size ?: 0
+    override fun getItemCount() = categories.size
 
 }
