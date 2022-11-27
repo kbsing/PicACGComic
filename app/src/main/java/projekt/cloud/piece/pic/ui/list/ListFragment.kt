@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.recyclerview.widget.RecyclerView.State
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.google.android.material.transition.platform.MaterialContainerTransform
 import kotlinx.coroutines.Job
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
@@ -51,6 +52,7 @@ class ListFragment: BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedElementEnterTransition = MaterialContainerTransform()
         val argument = requireArguments()
         category = argument.getString(ARG_CATEGORY, ARG_DEFAULT_VALUE)
         keyword = argument.getString(ARG_KEYWORD, ARG_DEFAULT_VALUE)
@@ -58,6 +60,7 @@ class ListFragment: BaseFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListBinding.inflate(inflater)
+        binding.root.transitionName = requireArguments().getString(getString(R.string.list_transition))
         return root
     }
     
