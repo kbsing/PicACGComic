@@ -1,6 +1,7 @@
 package projekt.cloud.piece.pic.ui.list
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
+import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody.Data.Comics.Doc
 import projekt.cloud.piece.pic.api.CommonBody.bitmap
 import projekt.cloud.piece.pic.databinding.LayoutRecyclerListBinding
@@ -32,6 +34,7 @@ class RecyclerViewAdapter(private val onClick: (Doc) -> Unit):
         
         fun setDoc(doc: Doc) {
             binding.doc = doc
+            binding.bitmap = BitmapFactory.decodeResource(binding.root.resources, R.drawable.ic_round_image_24)
             job?.cancel()
             job = ui {
                 binding.bitmap = withContext(io) {
