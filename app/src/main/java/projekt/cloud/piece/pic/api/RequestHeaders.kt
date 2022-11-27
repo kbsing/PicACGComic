@@ -1,6 +1,8 @@
 package projekt.cloud.piece.pic.api
 
 import com.fasterxml.uuid.Generators
+import com.fasterxml.uuid.UUIDTimer
+import java.util.Random
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -41,16 +43,17 @@ object RequestHeaders {
                         method: String,
                         authorizedToken: String? = null) =
         headers.toMutableMap().also { headers ->
-            val time = (System.currentTimeMillis() / 1000).toString()
-            val nonce = Generators.timeBasedGenerator()
+            val time = System.currentTimeMillis()
+            val nonce = Generators.timeBasedGenerator(null, UUIDTimer(Random(time), null))
                 .generate()
                 .toString()
                 .replace("-", "")
-            headers[HEADER_TIME] = time
+            val timeStr = (time / 1000).toString()
+            headers[HEADER_TIME] = timeStr
             headers[HEADER_NONCE] = nonce
             headers[HEADER_SIGNATURE] = generateSignature(
                 PRIVATE_KEY.toByteArray(),
-                generateRawData(requestApi, time, nonce, method).toByteArray()
+                generateRawData(requestApi, timeStr, nonce, method).toByteArray()
             )
             authorizedToken?.let { headers[HEADER_AUTHORIZATION] = it }
         }
