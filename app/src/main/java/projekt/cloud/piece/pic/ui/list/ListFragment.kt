@@ -77,8 +77,8 @@ class ListFragment: BaseFragment() {
         recyclerView.addItemDecoration(object : ItemDecoration() {
             override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: State) {
                 super.getItemOffsets(outRect, view, parent, state)
-                val pos = parent.getChildLayoutPosition(view)
-                when (pos % GRID_SPAN) {
+                val pos = parent.getChildAdapterPosition(view)
+                when ((view.layoutParams as StaggeredGridLayoutManager.LayoutParams).spanIndex) {
                     0 -> {
                         outRect.left = spacingOuterHor
                         outRect.right = spacingInnerHor
