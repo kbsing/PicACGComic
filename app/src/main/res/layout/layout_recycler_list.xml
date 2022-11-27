@@ -35,22 +35,29 @@
                 app:ratioY="4"
                 bitmap="@{bitmap}" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/material_text_view_title"
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/app_compat_image_view"
-                android:text="@{doc.title}"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:textColor="?attr/colorOnSurfaceVariant" />
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/md_spec_spacing_hor_8"
+                android:paddingVertical="@dimen/md_spec_spacing_ver_8">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/material_text_view_subtitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/material_text_view_title"
-                android:text="@{doc.author}"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/app_compat_image_view"
+                    android:text="@{doc.title}"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{doc.author}"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
         </RelativeLayout>
 
