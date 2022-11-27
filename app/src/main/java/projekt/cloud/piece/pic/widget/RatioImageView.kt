@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.View.MeasureSpec.EXACTLY
 import android.view.View.MeasureSpec.UNSPECIFIED
 import com.google.android.material.imageview.ShapeableImageView
+import kotlin.math.min
 import projekt.cloud.piece.pic.R
 
 class RatioImageView(context: Context, attributeSet: AttributeSet?): ShapeableImageView(context, attributeSet) {
@@ -22,13 +23,13 @@ class RatioImageView(context: Context, attributeSet: AttributeSet?): ShapeableIm
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val widthSpecMode = MeasureSpec.getMode(widthMeasureSpec)
         val heightSpecMode = MeasureSpec.getMode(heightMeasureSpec)
-        
+
         if (widthSpecMode == UNSPECIFIED && heightSpecMode == UNSPECIFIED) {
             return super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         }
         
-        val measureSpecWidth: Int
-        val measureSpecHeight: Int
+        var measureSpecWidth: Int
+        var measureSpecHeight: Int
         
         when {
             widthSpecMode != UNSPECIFIED && heightSpecMode == UNSPECIFIED -> {
@@ -38,15 +39,43 @@ class RatioImageView(context: Context, attributeSet: AttributeSet?): ShapeableIm
                     EXACTLY
                 )
             }
-            else -> {
+            widthSpecMode == UNSPECIFIED -> {
                 measureSpecHeight = heightMeasureSpec
                 measureSpecWidth = MeasureSpec.makeMeasureSpec(
                     getScaledSize(MeasureSpec.getSize(heightMeasureSpec), ratioX, ratioY),
                     EXACTLY
                 )
             }
+            else -> {
+                val measureWidth = MeasureSpec.getSize(widthMeasureSpec)
+                val measureHeight = MeasureSpec.getSize(heightMeasureSpec)
+
+                when {
+                    ratioX == ratioY -> {
+                        measureSpecWidth = MeasureSpec.makeMeasureSpec(min(measureWidth, measureHeight), EXACTLY)
+                        measureSpecHeight = measureSpecWidth
+                    }
+                    ratioX > ratioY -> {
+                        measureSpecHeight = measureHeight
+                        measureSpecWidth = measureHeight * ratioX / ratioY
+                        if (measureSpecWidth > measureWidth) {
+                            measureSpecHeight -= measureSpecWidth - measureWidth
+                            measureSpecWidth = measureWidth
+                        }
+                    }
+                    else -> {
+                        measureSpecWidth = measureWidth
+                        measureSpecHeight = measureWidth * ratioY / ratioX
+                        if (measureSpecHeight > measureHeight) {
+                            measureSpecWidth -= measureSpecHeight - measureHeight
+                            measureSpecHeight = measureHeight
+                        }
+                    }
+                }
+
+            }
         }
-        
+
         setMeasuredDimension(measureSpecWidth, measureSpecHeight)
     }
     
