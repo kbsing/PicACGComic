@@ -11,5 +11,6 @@ object PicApi {
     const val API_CATEGORIES = "categories"
 
     const val API_COMICS = "comics"
+    const val API_COMICS_INFO = "comics/"
 
 }
