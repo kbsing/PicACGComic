@@ -100,12 +100,12 @@ class ListFragment: BaseFragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setSupportActionBar(toolbar)
-        toolbar.setupWithNavController(findNavController())
+        val navController = findNavController()
+        toolbar.setupWithNavController(navController)
         val category = category
         when {
             !category.isNullOrBlank() -> toolbar.title = category
         }
-        val navController = findNavController()
         val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { doc, v ->
             requireCaching = true
             navController.navigate(
