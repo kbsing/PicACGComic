@@ -13,10 +13,23 @@ object CommonBody {
         val path: String,
         val fileServer: String
     )
+
+    @Serializable
+    data class Avatar(
+        val fileServer: String,
+        val path: String,
+        val originalName: String,
+    )
     
     private const val THUMB_URL_DIVIDER = "/static/"
     val Thumb.bitmap: Bitmap?
         get() = httpGet(fileServer + THUMB_URL_DIVIDER + path)?.body?.byteStream()?.let {
+            BitmapFactory.decodeStream(it)
+        }
+
+    private const val AVATAR_URL_DIVIDER = "/static/"
+    val Avatar.bitmap: Bitmap?
+        get() = httpGet(fileServer + AVATAR_URL_DIVIDER + path)?.body?.byteStream()?.let {
             BitmapFactory.decodeStream(it)
         }
 

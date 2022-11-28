@@ -1,6 +1,7 @@
 package projekt.cloud.piece.pic.api
 
 import kotlinx.serialization.Serializable
+import projekt.cloud.piece.pic.api.CommonBody.Avatar
 import projekt.cloud.piece.pic.api.PicApi.API_URL
 import projekt.cloud.piece.pic.api.PicApi.API_USER_PROFILE
 import projekt.cloud.piece.pic.api.RequestHeaders.generateHeaders
@@ -33,16 +34,8 @@ object ApiUser {
                 val slogan: String = "",
                 val title: String,
                 val verified: Boolean,
-                val avatar: Avatar) {
-
-                @Serializable
-                data class Avatar(
-                    val fileServer: String,
-                    val originalName: String,
-                    val path: String
-                )
-
-            }
+                val avatar: Avatar
+            )
 
         }
 

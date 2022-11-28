@@ -28,6 +28,7 @@ import kotlinx.serialization.json.Json
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiUser.ProfileResponseBody
 import projekt.cloud.piece.pic.api.ApiUser.userProfile
+import projekt.cloud.piece.pic.api.CommonBody.bitmap
 import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentAccountDetailBinding
 import projekt.cloud.piece.pic.util.CircularCroppedDrawable
@@ -47,11 +48,7 @@ class AccountDetailFragment: BaseFragment() {
                 }
                 _profile.value = profileResponseBody?.also {
                     _avatar.value = withContext(io) {
-                        it.data.user.avatar.let { avatar ->
-                            httpGet(avatar.fileServer + "/static/" + avatar.path)?.body?.byteStream()?.let {
-                                BitmapFactory.decodeStream(it)
-                            }
-                        }
+                        it.data.user.avatar.bitmap
                     }
                 }
             }
