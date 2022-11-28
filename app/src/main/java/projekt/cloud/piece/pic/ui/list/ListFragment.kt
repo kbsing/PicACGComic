@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -105,8 +106,12 @@ class ListFragment: BaseFragment() {
             !category.isNullOrBlank() -> toolbar.title = category
         }
         val navController = findNavController()
-        val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { _, v ->
+        val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { doc, v ->
             requireCaching = true
+            navController.navigate(
+                ListFragmentDirections.actionListToComicDetail(doc._id, v.transitionName),
+                FragmentNavigatorExtras(v to v.transitionName)
+            )
         }
         recyclerView.adapter = recyclerViewAdapter
         recyclerView.layoutManager = StaggeredGridLayoutManager(GRID_SPAN, VERTICAL)

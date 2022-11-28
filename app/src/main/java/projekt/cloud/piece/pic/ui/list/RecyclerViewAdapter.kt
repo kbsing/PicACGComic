@@ -37,7 +37,7 @@ class RecyclerViewAdapter(private val docs: List<Doc>,
         
         fun setDoc(doc: Doc) {
             binding.doc = doc
-
+            binding.root.transitionName = binding.root.resources.getString(R.string.comic_detail_transition_prefix) + doc._id
             when {
                 covers.containsKey(doc._id) -> {
                     binding.bitmap = covers[doc._id]

@@ -49,6 +49,22 @@
     <fragment
         android:id="@+id/list"
         android:name="projekt.cloud.piece.pic.ui.list.ListFragment"
-        tools:layout="@layout/fragment_list" />
+        tools:layout="@layout/fragment_list" >
+        <action
+            android:id="@+id/action_list_to_comic_detail"
+            app:destination="@id/comic_detail">
+            <argument
+                android:name="id"
+                app:argType="string" />
+            <argument
+                android:name="comic_detail_transition"
+                app:argType="string" />
+        </action>
+    </fragment>
+
+    <fragment
+        android:id="@+id/comic_detail"
+        android:name="projekt.cloud.piece.pic.ui.comicDetail.ComicDetailFragment"
+        tools:layout="@layout/fragment_comic_detail" />
 
 </navigation>

@@ -25,6 +25,9 @@
     <string name="list_transition">list_transition</string>
     <string name="list_transition_prefix">list_transition_</string>
 
+    <string name="comic_detail_transition">comic_detail_transition</string>
+    <string name="comic_detail_transition_prefix">comic_detail_transition_</string>
+
     <string name="storage_account">storage_account</string>
 
 </resources>
