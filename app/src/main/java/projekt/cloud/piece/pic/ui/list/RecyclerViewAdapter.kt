@@ -64,7 +64,7 @@ class RecyclerViewAdapter(private val docs: List<Doc>,
         
     }
     
-    private var docSize = 0
+    private var docSize = docs.size
 
     fun notifyListUpdate() {
         notifyItemRangeInserted(docSize, docs.size - docSize)

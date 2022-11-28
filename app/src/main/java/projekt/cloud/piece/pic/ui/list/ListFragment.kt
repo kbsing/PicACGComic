@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
@@ -79,6 +80,8 @@ class ListFragment: BaseFragment() {
     private val category: String?
         get() = comics.category
 
+    private var requireCaching = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform()
@@ -90,6 +93,7 @@ class ListFragment: BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentListBinding.inflate(inflater)
         binding.root.transitionName = requireArguments().getString(getString(R.string.list_transition))
+        postponeEnterTransition()
         return root
     }
     
@@ -100,9 +104,13 @@ class ListFragment: BaseFragment() {
         when {
             !category.isNullOrBlank() -> toolbar.title = category
         }
-        val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { _, _ -> }
+        val navController = findNavController()
+        val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { _, v ->
+            requireCaching = true
+        }
         recyclerView.adapter = recyclerViewAdapter
         recyclerView.layoutManager = StaggeredGridLayoutManager(GRID_SPAN, VERTICAL)
+        recyclerView.doOnPreDraw { startPostponedEnterTransition() }
 
         val spacingOuterHor = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_hor_16)
         val spacingInnerHor = resources.getDimensionPixelSize(R.dimen.md_spec_spacing_hor_4)
@@ -134,14 +142,16 @@ class ListFragment: BaseFragment() {
             }
         })
 
-        job = io {
-            val response = startRequest()
-            if (response != null) {
-                comicsResponseBodies.add(response)
-                docs.addAll(comicsResponseBodies.last().data.comics.docs)
-                ui { recyclerViewAdapter.notifyListUpdate() }
+        if (comicsResponseBodies.isEmpty()) {
+            job = io {
+                val response = startRequest()
+                if (response != null) {
+                    comicsResponseBodies.add(response)
+                    docs.addAll(comicsResponseBodies.last().data.comics.docs)
+                    ui { recyclerViewAdapter.notifyListUpdate() }
+                }
+                job = null
             }
-            job = null
         }
     }
 
@@ -162,8 +172,10 @@ class ListFragment: BaseFragment() {
             ?.let { Json.decodeFromString<ComicsResponseBody>(it) }
 
     override fun onDestroyView() {
-        docs.clear()
-        covers.clear()
+        if (!requireCaching) {
+            docs.clear()
+            covers.clear()
+        }
         _binding = null
         super.onDestroyView()
     }
