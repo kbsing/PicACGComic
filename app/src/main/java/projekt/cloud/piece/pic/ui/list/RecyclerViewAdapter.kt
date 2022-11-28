@@ -1,6 +1,7 @@
 package projekt.cloud.piece.pic.ui.list
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
@@ -16,7 +17,9 @@ import projekt.cloud.piece.pic.databinding.LayoutRecyclerListBinding
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 
-class RecyclerViewAdapter(private val onClick: (Doc) -> Unit):
+class RecyclerViewAdapter(private val docs: List<Doc>,
+                          private val covers: MutableMap<String, Bitmap?>,
+                          private val onClick: (Doc, View) -> Unit):
     RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>() {
 
     inner class RecyclerViewHolder(private val binding: LayoutRecyclerListBinding):
@@ -34,35 +37,38 @@ class RecyclerViewAdapter(private val onClick: (Doc) -> Unit):
         
         fun setDoc(doc: Doc) {
             binding.doc = doc
-            binding.bitmap = BitmapFactory.decodeResource(binding.root.resources, R.drawable.ic_round_image_24)
-            job?.cancel()
-            job = ui {
-                binding.bitmap = withContext(io) {
-                    doc.thumb.bitmap
+
+            when {
+                covers.containsKey(doc._id) -> {
+                    binding.bitmap = covers[doc._id]
                 }
-                job = null
+                else -> {
+                    binding.bitmap = BitmapFactory.decodeResource(binding.root.resources, R.drawable.ic_round_image_24)
+                    job?.cancel()
+                    job = ui {
+                        binding.bitmap = withContext(io) {
+                            doc.thumb.bitmap
+                        }
+                        job = null
+                    }
+                }
             }
+
         }
     
-        override fun onClick(v: View?) {
-            binding.doc?.let(onClick)
+        override fun onClick(v: View) {
+            binding.doc?.let {
+                onClick.invoke(it, v)
+            }
         }
         
     }
     
     private var docSize = 0
-    private val docs = arrayListOf<Doc>()
 
-    fun addNewDocs(newDocs: List<Doc>) {
-        docs.addAll(newDocs)
-        notifyItemRangeInserted(docSize, newDocs.size)
-        docSize += newDocs.size
-    }
-
-    fun clearAll() {
-        notifyItemRangeRemoved(0, docSize)
-        docs.clear()
-        docSize = 0
+    fun notifyListUpdate() {
+        notifyItemRangeInserted(docSize, docs.size - docSize)
+        docSize = docs.size
     }
     
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =

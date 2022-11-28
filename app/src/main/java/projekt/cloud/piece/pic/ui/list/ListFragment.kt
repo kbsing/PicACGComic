@@ -1,10 +1,13 @@
 package projekt.cloud.piece.pic.ui.list
 
+import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +22,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody
+import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody.Data.Comics.Doc
 import projekt.cloud.piece.pic.api.ApiComics.comics
 import projekt.cloud.piece.pic.api.CommonParam.SORT_NEW_TO_OLD
 import projekt.cloud.piece.pic.base.BaseFragment
@@ -37,6 +41,18 @@ class ListFragment: BaseFragment() {
 
         private const val GRID_SPAN = 2
     }
+
+    class Comics: ViewModel() {
+
+        var category: String? = null
+        var keyword: String? = null
+
+        val comicsResponseBodies = arrayListOf<ComicsResponseBody>()
+
+        val docs = arrayListOf<Doc>()
+        val covers = mutableMapOf<String, Bitmap?>()
+
+    }
     
     private var _binding: FragmentListBinding? = null
     private val binding: FragmentListBinding
@@ -49,19 +65,26 @@ class ListFragment: BaseFragment() {
 
     private var sort = SORT_NEW_TO_OLD
 
-    private var category: String? = null
-    private var comicsResponseBody = arrayListOf<ComicsResponseBody>()
-
-    private var keyword: String? = null
-
     private var job: Job? = null
+
+    private val comics: Comics by viewModels()
+
+    private val comicsResponseBodies: ArrayList<ComicsResponseBody>
+        get() = comics.comicsResponseBodies
+    private val docs: ArrayList<Doc>
+        get() = comics.docs
+    private val covers: MutableMap<String, Bitmap?>
+        get() = comics.covers
+
+    private val category: String?
+        get() = comics.category
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform()
         val argument = requireArguments()
-        category = argument.getString(ARG_CATEGORY, ARG_DEFAULT_VALUE)
-        keyword = argument.getString(ARG_KEYWORD, ARG_DEFAULT_VALUE)
+        comics.category = argument.getString(ARG_CATEGORY, ARG_DEFAULT_VALUE)
+        comics.keyword = argument.getString(ARG_KEYWORD, ARG_DEFAULT_VALUE)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -77,8 +100,7 @@ class ListFragment: BaseFragment() {
         when {
             !category.isNullOrBlank() -> toolbar.title = category
         }
-        val recyclerViewAdapter = RecyclerViewAdapter {
-        }
+        val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { _, _ -> }
         recyclerView.adapter = recyclerViewAdapter
         recyclerView.layoutManager = StaggeredGridLayoutManager(GRID_SPAN, VERTICAL)
 
@@ -111,11 +133,13 @@ class ListFragment: BaseFragment() {
                 }
             }
         })
+
         job = io {
             val response = startRequest()
             if (response != null) {
-                comicsResponseBody.add(response)
-                ui { recyclerViewAdapter.addNewDocs(response.data.comics.docs) }
+                comicsResponseBodies.add(response)
+                docs.addAll(comicsResponseBodies.last().data.comics.docs)
+                ui { recyclerViewAdapter.notifyListUpdate() }
             }
             job = null
         }
@@ -123,9 +147,8 @@ class ListFragment: BaseFragment() {
 
     private fun startRequest(): ComicsResponseBody? {
         val category = category
-        val keyword = keyword
         return when {
-            !category.isNullOrBlank() -> requestComic(category, comicsResponseBody.size + 1)
+            !category.isNullOrBlank() -> requestComic(category, comicsResponseBodies.size + 1)
             else -> null
         }
     }
@@ -139,6 +162,8 @@ class ListFragment: BaseFragment() {
             ?.let { Json.decodeFromString<ComicsResponseBody>(it) }
 
     override fun onDestroyView() {
+        docs.clear()
+        covers.clear()
         _binding = null
         super.onDestroyView()
     }
