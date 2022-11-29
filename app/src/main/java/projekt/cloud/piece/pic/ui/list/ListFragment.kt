@@ -22,6 +22,7 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 import kotlinx.coroutines.Job
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
+import projekt.cloud.piece.pic.ComicCover
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody
 import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody.Data.Comics.Doc
@@ -70,6 +71,9 @@ class ListFragment: BaseFragment() {
     private var job: Job? = null
 
     private val comics: Comics by viewModels()
+    private val comicCover: ComicCover by viewModels(
+        ownerProducer = { requireActivity() }
+    )
 
     private val comicsResponseBodies: ArrayList<ComicsResponseBody>
         get() = comics.comicsResponseBodies
@@ -108,6 +112,7 @@ class ListFragment: BaseFragment() {
         }
         val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { doc, v ->
             requireCaching = true
+            comicCover.setCover(covers[doc._id])
             navController.navigate(
                 ListFragmentDirections.actionListToComicDetail(doc._id, v.transitionName),
                 FragmentNavigatorExtras(v to v.transitionName)
