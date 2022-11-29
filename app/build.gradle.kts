@@ -27,6 +27,8 @@ android {
         }
         val debug by getting {
             isMinifyEnabled = false
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
         }
     }
     compileOptions {
