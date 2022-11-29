@@ -27,6 +27,8 @@
 
     <string name="comic_detail_transition">comic_detail_transition</string>
     <string name="comic_detail_transition_prefix">comic_detail_transition_</string>
+    <string name="comic_detail_menu_add_to_favorites">Add to Favorites</string>
+    <string name="comic_detail_menu_likes">Likes</string>
 
     <string name="storage_account">storage_account</string>
 
