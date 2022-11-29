@@ -20,6 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+# For serialization
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.AnnotationsKt # core serialization annotations
 -keep,includedescriptorclasses class kotlinx.serialization.json.**$$serializer { *; }
@@ -30,4 +31,15 @@
 }
 -keepclasseswithmembers class projekt.cloud.piece.pic.** {
     kotlinx.serialization.KSerializer serializer(...);
+}
+
+# For reflection of SearchView
+-keepclassmembernames class androidx.appcompat.widget.SearchView {
+    private final android.view.View mSearchPlate;
+    private final android.widget.ImageView mCollapsedIcon;
+}
+
+# For reflection of Toolbar
+-keepclassmembernames class androidx.appcompat.widget.Toolbar {
+    private android.widget.ImageView mLogoView;
 }
