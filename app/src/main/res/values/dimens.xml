@@ -11,6 +11,7 @@
     <dimen name="md_spec_fab_spacing_bottom">16dp</dimen>
     <dimen name="md_spec_fab_spacing_end">16dp</dimen>
     <dimen name="md_spec_radius_12">12dp</dimen>
+    <dimen name="md_spec_avatar_size">40dp</dimen>
 
     <dimen name="home_search_height">48dp</dimen>
     <dimen name="home_search_radius">24dp</dimen>
