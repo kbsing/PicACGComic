@@ -13,9 +13,11 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.MenuProvider
+import androidx.core.view.get
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle.State
 import androidx.lifecycle.LiveData
@@ -102,6 +104,8 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
         get() = binding.materialCheckBox
     private val creatorDetail
         get() = binding.linearLayoutCompat
+    private val nestedScrollView: NestedScrollView
+        get() = binding.nestedScrollView
 
     private var id: String? = null
 
@@ -142,7 +146,22 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val navController = findNavController()
         setSupportActionBar(bottomAppBar)
+        bottomAppBar.performHide(false)
         toolbar.setupWithNavController(navController)
+        nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, scrollX, scrollY, _, _ ->
+            when {
+                scrollY >= v[0].measuredHeight - v.measuredHeight -> {
+                    if (!bottomAppBar.isScrolledDown) {
+                        bottomAppBar.performHide()
+                    }
+                }
+                else -> {
+                    if (!bottomAppBar.isScrolledUp) {
+                        bottomAppBar.performShow()
+                    }
+                }
+            }
+        }
         comic.comic.observe(viewLifecycleOwner) {
             it?.tags?.let { tags -> addTags(tags) }
         }
