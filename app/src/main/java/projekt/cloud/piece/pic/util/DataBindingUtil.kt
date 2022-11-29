@@ -11,5 +11,11 @@ object DataBindingUtil {
     fun AppCompatImageView.setImage(bitmap: Bitmap?) {
         setImageBitmap(bitmap)
     }
+    
+    @JvmStatic
+    @BindingAdapter("circleBitmap")
+    fun AppCompatImageView.setCircleBitmap(bitmap: Bitmap?) {
+        bitmap?.let { setImageDrawable(CircularCroppedDrawable(it)) }
+    }
 
 }
