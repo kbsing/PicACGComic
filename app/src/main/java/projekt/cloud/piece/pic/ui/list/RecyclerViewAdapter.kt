@@ -46,9 +46,11 @@ class RecyclerViewAdapter(private val docs: List<Doc>,
                     binding.bitmap = BitmapFactory.decodeResource(binding.root.resources, R.drawable.ic_round_image_24)
                     job?.cancel()
                     job = ui {
-                        binding.bitmap = withContext(io) {
+                        val bitmap = withContext(io) {
                             doc.thumb.bitmap
                         }
+                        binding.bitmap = bitmap
+                        covers[doc._id] = bitmap
                         job = null
                     }
                 }
