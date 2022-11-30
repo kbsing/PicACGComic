@@ -15,6 +15,7 @@ import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -25,8 +26,7 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.Hold
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.withContext
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiCategories.CategoriesResponseBody
 import projekt.cloud.piece.pic.api.ApiCategories.CategoriesResponseBody.Data.Category
@@ -35,6 +35,9 @@ import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentHomeBinding
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
+import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
+import projekt.cloud.piece.pic.util.ResponseUtil.decodeJson
+import projekt.cloud.piece.pic.util.SnackUtil.showSnack
 
 class HomeFragment: BaseFragment(), OnClickListener {
 
@@ -46,6 +49,36 @@ class HomeFragment: BaseFragment(), OnClickListener {
 
         val categories = mutableListOf<Category>()
         val thumbs = mutableMapOf<String, Bitmap?>()
+        
+        fun updateCategories(token: String?, success: () -> Unit, failed: (Int) -> Unit) {
+            if (token == null) {
+                if (categories.isNotEmpty()) {
+                    categories.clear()
+                    thumbs.clear()
+                }
+                return failed.invoke(R.string.home_snack_exception)
+            }
+            if (categories.isEmpty()) {
+                viewModelScope.ui {
+                    val response = withContext(io) {
+                        categories(token)
+                    } ?: return@ui failed.invoke(R.string.home_snack_exception)
+                    
+                    if (response.code != RESPONSE_CODE_SUCCESS) {
+                        return@ui failed.invoke(R.string.home_snack_error_code)
+                    }
+        
+                    categories.addAll(
+                        response.decodeJson<CategoriesResponseBody>()
+                            .data
+                            .categories
+                            .filter { !it.isWeb }
+                    )
+        
+                    success.invoke()
+                }
+            }
+        }
 
     }
 
@@ -134,31 +167,21 @@ class HomeFragment: BaseFragment(), OnClickListener {
         )
 
         applicationConfigs.token.observe(viewLifecycleOwner) {
-            when {
-                it == null -> {
-                    categories.categories.clear()
-                    @Suppress("NotifyDataSetChanged")
-                    (recyclerView.adapter as RecyclerViewAdapter)
-                        .notifyDataSetChanged()
+            categories.updateCategories(
+                it,
+                success = { updateCategories() },
+                failed = { resId ->
+                    root.showSnack(resId)
+                    updateCategories()
                 }
-                categories.categories.isEmpty() -> io {
-                    categories(it)?.body?.string()?.let { json ->
-                        Json.decodeFromString<CategoriesResponseBody>(json)
-                    }?.data?.categories?.filter { category ->
-                        !category.isWeb
-                    }?.let { categories -> updateCategories(categories) }
-                }
-            }
+            )
         }
     }
 
-    private fun updateCategories(categoryList: List<Category>) {
-        categories.categories.addAll(categoryList)
-        ui {
-            @Suppress("NotifyDataSetChanged")
-            (recyclerView.adapter as RecyclerViewAdapter)
-                .notifyDataSetChanged()
-        }
+    private fun updateCategories() {
+        @Suppress("NotifyDataSetChanged")
+        (recyclerView.adapter as RecyclerViewAdapter)
+            .notifyDataSetChanged()
     }
 
     override fun onDestroyView() {

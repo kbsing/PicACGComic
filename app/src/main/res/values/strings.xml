@@ -2,7 +2,10 @@
     <string name="app_name">PicACGComic</string>
 
     <string name="home_search">Search</string>
-
+    <string name="home_snack_not_logged_in">Account not logged in</string>
+    <string name="home_snack_exception">Connection Exception Thrown</string>
+    <string name="home_snack_error_code">Error Code Responded</string>
+    
     <string name="search_title">Search</string>
     <string name="search_transition">search_transition</string>
 
