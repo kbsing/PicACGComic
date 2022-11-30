@@ -25,7 +25,8 @@ class RecyclerViewAdapter(private val docs: List<Doc>,
             binding.root.setOnClickListener(this)
         }
         
-        fun setDoc(doc: Doc) {
+        fun setData(position: Int, doc: Doc) {
+            binding.index = position.toString()
             binding.doc = doc
         }
     
@@ -41,7 +42,7 @@ class RecyclerViewAdapter(private val docs: List<Doc>,
         RecyclerViewHolder(parent)
     
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        holder.setDoc(docs[position])
+        holder.setData(itemCount - position, docs[position])
     }
     
     override fun getItemCount() = docs.size

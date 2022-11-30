@@ -26,6 +26,7 @@
             android:gravity="center"
             android:layout_centerVertical="true"
             android:layout_marginEnd="@dimen/md_spec_spacing_hor_16"
+            android:text="@{index}"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
         
         <com.google.android.material.textview.MaterialTextView
