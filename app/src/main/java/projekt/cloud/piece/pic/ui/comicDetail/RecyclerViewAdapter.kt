@@ -35,6 +35,8 @@ class RecyclerViewAdapter(private val docs: List<Doc>,
         
     }
     
+    private var docSize = docs.size
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         RecyclerViewHolder(parent)
     
@@ -43,5 +45,10 @@ class RecyclerViewAdapter(private val docs: List<Doc>,
     }
     
     override fun getItemCount() = docs.size
+    
+    fun notifyDataUpdated() {
+        notifyItemRangeInserted(docSize, docs.size - docSize)
+        docSize = docs.size
+    }
     
 }
