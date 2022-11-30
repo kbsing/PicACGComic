@@ -199,7 +199,7 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
         setSupportActionBar(bottomAppBar)
         bottomAppBar.performHide(false)
         toolbar.setupWithNavController(navController)
-        nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, scrollX, scrollY, _, _ ->
+        nestedScrollView.setOnScrollChangeListener { v: NestedScrollView, _, scrollY, _, _ ->
             when {
                 scrollY >= v[0].measuredHeight - v.measuredHeight -> {
                     if (!bottomAppBar.isScrolledDown) {
