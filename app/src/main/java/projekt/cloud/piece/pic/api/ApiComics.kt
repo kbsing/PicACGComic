@@ -72,8 +72,10 @@ object ApiComics {
         data class Data(val comic: Comic) {
 
             @Serializable
-            data class Comic(val _id: String,
-                             val _creator: Creator,
+            data class Comic(@SerialName("_id")
+                             val id: String,
+                             @SerialName("_creator")
+                             val creator: Creator,
                              val title: String,
                              val description: String,
                              val thumb: Thumb,
@@ -84,8 +86,10 @@ object ApiComics {
                              val pagesCount: Int,
                              val epsCount: Int,
                              val finished: Boolean,
-                             val updated_at: String,
-                             val created_at: String,
+                             @SerialName("updated_at")
+                             val updateDate: String,
+                             @SerialName("created_at")
+                             val createDate: String,
                              val allowDownload: Boolean,
                              val allowComment: Boolean,
                              val totalLikes: Int,
@@ -99,7 +103,8 @@ object ApiComics {
 
                 @Serializable
                 data class Creator(
-                    val _id: String,
+                    @SerialName("_id")
+                    val id: String,
                     val gender: String,
                     val name: String,
                     val slogan: String = "",

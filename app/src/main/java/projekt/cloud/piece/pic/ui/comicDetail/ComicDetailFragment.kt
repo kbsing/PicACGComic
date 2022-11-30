@@ -77,7 +77,7 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
                 }
                 _comic.value = comic
                 _avatar.value = withContext(io) {
-                    comic?._creator?.avatar?.bitmap
+                    comic?.creator?.avatar?.bitmap
                 }
             }
         }

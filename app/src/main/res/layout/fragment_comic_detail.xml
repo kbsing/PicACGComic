@@ -122,7 +122,7 @@
                                     android:layout_toEndOf="@id/app_compat_image_view"
                                     android:layout_toStartOf="@id/material_check_box"
                                     android:maxLines="1"
-                                    android:text="@{comic.comic._creator.name}"
+                                    android:text="@{comic.comic.creator.name}"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                                     android:textColor="?attr/colorOnSurfaceVariant" />
         
@@ -134,7 +134,7 @@
                                     android:layout_toEndOf="@id/app_compat_image_view"
                                     android:layout_toStartOf="@id/material_check_box"
                                     android:maxLines="1"
-                                    android:text="@{`Lv. ` + comic.comic._creator.level}"
+                                    android:text="@{`Lv. ` + comic.comic.creator.level}"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Caption" />
     
                             </RelativeLayout>
@@ -151,14 +151,14 @@
                                 <com.google.android.material.textview.MaterialTextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@{` - ` + comic.comic._creator.title + ` - `}"
+                                    android:text="@{` - ` + comic.comic.creator.title + ` - `}"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                                     android:gravity="center" />
                                 
                                 <com.google.android.material.textview.MaterialTextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="@{comic.comic._creator.slogan}"
+                                    android:text="@{comic.comic.creator.slogan}"
                                     android:textAppearance="@style/TextAppearance.MaterialComponents.Body2" />
                                 
                             </androidx.appcompat.widget.LinearLayoutCompat>
