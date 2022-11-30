@@ -15,11 +15,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener
 import androidx.recyclerview.widget.RecyclerView.State
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import projekt.cloud.piece.pic.ComicCover
 import projekt.cloud.piece.pic.R
@@ -53,10 +55,12 @@ class ListFragment: BaseFragment() {
         var category: String? = null
         var keyword: String? = null
 
-        val comicsResponseBodies = arrayListOf<ComicsResponseBody>()
+        private val comicsResponseBodies = arrayListOf<ComicsResponseBody>()
 
         val docs = arrayListOf<Doc>()
         val covers = mutableMapOf<String, Bitmap?>()
+        
+        private var job: Job? = null
         
         fun initialWithCategory(token: String?, sort: String, success: () -> Unit, failed: (Int) -> Unit) {
             if (token.isNullOrBlank()) {
@@ -71,8 +75,24 @@ class ListFragment: BaseFragment() {
             }
         }
         
+        fun updateCategoryList(token: String?, sort: String, success: () -> Unit, failed: (Int) -> Unit) {
+            if (job?.isActive == true) {
+                return
+            }
+            if (token.isNullOrBlank()) {
+                return failed.invoke(R.string.list_snack_not_logged_in)
+            }
+            val category = category
+            if (category.isNullOrBlank()) {
+                return failed.invoke(R.string.list_snack_keyword_no_blank)
+            }
+            if (comicsResponseBodies.size < comicsResponseBodies.last().data.comics.pages) {
+                requestCategory(token, category, comicsResponseBodies.size + 1, sort, success, failed)
+            }
+        }
+        
         private fun requestCategory(token: String, category: String, page: Int, sort: String, success: () -> Unit, failed: (Int) -> Unit) {
-            viewModelScope.ui {
+            job = viewModelScope.ui {
                 val response = withContext(io) {
                     comics(token, page, category, sort)
                 } ?: return@ui failed.invoke(R.string.list_snack_exception)
@@ -89,6 +109,7 @@ class ListFragment: BaseFragment() {
                         .docs
                 )
                 success.invoke()
+                job = null
             }
         }
 
@@ -158,28 +179,30 @@ class ListFragment: BaseFragment() {
         applicationConfigs.windowInsetBottom.value?.let {
             bottomInset = it
         }
-        recyclerView.addItemDecoration(object : ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: State) {
-                super.getItemOffsets(outRect, view, parent, state)
-                outRect.right = spacingInnerHor
-                val pos = parent.getChildAdapterPosition(view)
-                val itemCount = recyclerViewAdapter.itemCount
-                outRect.bottom = when {
-                    itemCount % GRID_SPAN == 0 && pos >= itemCount - GRID_SPAN -> bottomInset
-                    pos == itemCount - 1 -> bottomInset
-                    else -> spacingOuterVer
+        
+        recyclerView.addItemDecoration(
+            object : ItemDecoration() {
+                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: State) {
+                    super.getItemOffsets(outRect, view, parent, state)
+                    outRect.right = spacingInnerHor
+                    val pos = parent.getChildAdapterPosition(view)
+                    val itemCount = recyclerViewAdapter.itemCount
+                    outRect.bottom = when {
+                        itemCount % GRID_SPAN == 0 && pos >= itemCount - GRID_SPAN -> bottomInset
+                        pos == itemCount - 1 -> bottomInset
+                        else -> spacingOuterVer
+                    }
                 }
             }
-        })
+        )
         
         val success = {
             recyclerViewAdapter.notifyListUpdate()
+            recyclerView.invalidateItemDecorations()
         }
-        
         val failed: (Int) -> Unit = { resId ->
             root.showSnack(resId)
         }
-        
         val argument = requireArguments()
         when {
             argument.containsKey(ARG_CATEGORY) -> {
@@ -192,6 +215,13 @@ class ListFragment: BaseFragment() {
             else -> failed.invoke(R.string.list_snack_arg_required)
         }
         
+        recyclerView.addOnScrollListener(object: OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(1)) {
+                    comics.updateCategoryList(applicationConfigs.token.value, sort, success, failed)
+                }
+            }
+        })
         
     }
 
