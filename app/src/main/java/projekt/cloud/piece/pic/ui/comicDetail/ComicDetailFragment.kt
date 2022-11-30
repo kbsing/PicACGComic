@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.google.android.material.appbar.MaterialToolbar
@@ -37,8 +38,6 @@ import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
 import projekt.cloud.piece.pic.ComicCover
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiComics.ComicResponseBody
@@ -50,6 +49,10 @@ import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 import projekt.cloud.piece.pic.util.DisplayUtil.deviceBounds
 import projekt.cloud.piece.pic.util.FragmentUtil.setSupportActionBar
+import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
+import projekt.cloud.piece.pic.util.RequestFailedMethodBlock
+import projekt.cloud.piece.pic.util.RequestSuccessMethodBlock
+import projekt.cloud.piece.pic.util.ResponseUtil.decodeJson
 
 class ComicDetailFragment: BaseFragment(), OnClickListener {
 
@@ -67,17 +70,29 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
         val avatar: LiveData<Bitmap?>
             get() = _avatar
         
-        fun initial(id: String, token: String) {
+        var id: String? = null
+        
+        fun requestComicInfo(token: String?,
+                             success: RequestSuccessMethodBlock,
+                             failed: RequestFailedMethodBlock) {
+            
+            token ?: return failed.invoke(R.string.comic_detail_snack_not_logged)
+            val id = id ?: return failed.invoke(R.string.comic_detail_snack_arg_required)
+            
             viewModelScope.ui {
-                val comic = withContext(io) {
-                    comic(id, token)?.body?.string()
-                        ?.let { Json.decodeFromString<ComicResponseBody>(it) }
-                        ?.data
-                        ?.comic
+                val response = withContext(io) {
+                    comic(id, token)
+                } ?: return@ui failed.invoke(R.string.comic_detail_exception)
+                
+                if (response.code != RESPONSE_CODE_SUCCESS) {
+                    return@ui failed.invoke(R.string.comic_detail_error_code)
                 }
+                
+                val comic = response.decodeJson<ComicResponseBody>().data.comic
                 _comic.value = comic
+                
                 _avatar.value = withContext(io) {
-                    comic?.creator?.avatar?.bitmap
+                    comic.creator.avatar.bitmap
                 }
             }
         }
@@ -117,7 +132,10 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform()
-        id = requireArguments().getString(ARG_ID)
+        val arguments = requireArguments()
+        if (arguments.containsKey(ARG_ID)) {
+            comic.id = requireArguments().getString(ARG_ID)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -129,8 +147,14 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
         binding.comic = comic
         binding.comicCover = comicCover
         binding.lifecycleOwner = viewLifecycleOwner
-
-        id?.let { id -> applicationConfigs.token.value?.let { token -> comic.initial(id, token) } }
+        
+        applicationConfigs.token.observe(viewLifecycleOwner) {
+            comic.requestComicInfo(
+                it,
+                success = {  },
+                failed = {  }
+            )
+        }
         
         val fabMarginBottom = floatingActionButton.marginBottom
         applicationConfigs.windowInsetBottom.observe(viewLifecycleOwner) {
