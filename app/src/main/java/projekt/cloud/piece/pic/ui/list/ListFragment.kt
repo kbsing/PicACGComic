@@ -55,7 +55,7 @@ class ListFragment: BaseFragment() {
         var category: String? = null
         var keyword: String? = null
 
-        private val comicsResponseBodies = arrayListOf<ComicsResponseBody>()
+        private val comicsList = arrayListOf<ComicsResponseBody.Data.Comics>()
 
         val docs = arrayListOf<Doc>()
         val covers = mutableMapOf<String, Bitmap?>()
@@ -70,7 +70,7 @@ class ListFragment: BaseFragment() {
             if (category.isNullOrBlank()) {
                 return failed.invoke(R.string.list_snack_keyword_no_blank)
             }
-            if (comicsResponseBodies.isEmpty()) {
+            if (comicsList.isEmpty()) {
                 requestCategory(token, category, REQUEST_FIRST_PAGE, sort, success, failed)
             }
         }
@@ -86,8 +86,8 @@ class ListFragment: BaseFragment() {
             if (category.isNullOrBlank()) {
                 return failed.invoke(R.string.list_snack_keyword_no_blank)
             }
-            if (comicsResponseBodies.size < comicsResponseBodies.last().data.comics.pages) {
-                requestCategory(token, category, comicsResponseBodies.size + 1, sort, success, failed)
+            if (comicsList.size < comicsList.last().pages) {
+                requestCategory(token, category, comicsList.size + 1, sort, success, failed)
             }
         }
         
@@ -101,13 +101,9 @@ class ListFragment: BaseFragment() {
                     return@ui failed.invoke(R.string.list_snack_error_code)
                 }
         
-                val comicResponseBody = response.decodeJson<ComicsResponseBody>()
-                comicsResponseBodies.add(comicResponseBody)
-                docs.addAll(
-                    comicResponseBody.data
-                        .comics
-                        .docs
-                )
+                val comics = response.decodeJson<ComicsResponseBody>().data.comics
+                comicsList.add(comics)
+                docs.addAll(comics.docs)
                 success.invoke()
                 job = null
             }
