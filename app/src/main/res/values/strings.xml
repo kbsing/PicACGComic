@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name">PicACGComic</string>
+    
+    <string name="request_not_logged">Account not logged in</string>
+    <string name="response_exception">Connection Exception Thrown</string>
+    <string name="response_error_code">Error Code Responded</string>
 
     <string name="home_search">Search</string>
-    <string name="home_snack_not_logged_in">Account not logged in</string>
-    <string name="home_snack_exception">Connection Exception Thrown</string>
-    <string name="home_snack_error_code">Error Code Responded</string>
+    <string name="home_snack_not_logged_in">@string/request_not_logged</string>
+    <string name="home_snack_exception">@string/response_exception</string>
+    <string name="home_snack_error_code">@string/response_error_code</string>
     
     <string name="search_title">Search</string>
     <string name="search_transition">search_transition</string>
@@ -27,6 +31,11 @@
 
     <string name="list_transition">list_transition</string>
     <string name="list_transition_prefix">list_transition_</string>
+    <string name="list_snack_arg_required">Argument Not Enough</string>
+    <string name="list_snack_not_logged_in">@string/request_not_logged</string>
+    <string name="list_snack_keyword_no_blank">Search keyword should not be blank</string>
+    <string name="list_snack_exception">@string/response_exception</string>
+    <string name="list_snack_error_code">@string/response_error_code</string>
 
     <string name="comic_detail_transition">comic_detail_transition</string>
     <string name="comic_detail_transition_prefix">comic_detail_transition_</string>

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -19,9 +20,7 @@ import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
-import kotlinx.coroutines.Job
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.withContext
 import projekt.cloud.piece.pic.ComicCover
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody
@@ -33,16 +32,20 @@ import projekt.cloud.piece.pic.databinding.FragmentListBinding
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 import projekt.cloud.piece.pic.util.FragmentUtil.setSupportActionBar
+import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
+import projekt.cloud.piece.pic.util.ResponseUtil.decodeJson
+import projekt.cloud.piece.pic.util.SnackUtil.showSnack
 
 class ListFragment: BaseFragment() {
 
     companion object {
-        private const val ARG_DEFAULT_VALUE = ""
 
         private const val ARG_CATEGORY = "category"
         private const val ARG_KEYWORD = "keyword"
 
         private const val GRID_SPAN = 2
+        
+        private const val REQUEST_FIRST_PAGE = 1
     }
 
     class Comics: ViewModel() {
@@ -54,6 +57,40 @@ class ListFragment: BaseFragment() {
 
         val docs = arrayListOf<Doc>()
         val covers = mutableMapOf<String, Bitmap?>()
+        
+        fun initialWithCategory(token: String?, sort: String, success: () -> Unit, failed: (Int) -> Unit) {
+            if (token.isNullOrBlank()) {
+                return failed.invoke(R.string.list_snack_not_logged_in)
+            }
+            val category = category
+            if (category.isNullOrBlank()) {
+                return failed.invoke(R.string.list_snack_keyword_no_blank)
+            }
+            if (comicsResponseBodies.isEmpty()) {
+                requestCategory(token, category, REQUEST_FIRST_PAGE, sort, success, failed)
+            }
+        }
+        
+        private fun requestCategory(token: String, category: String, page: Int, sort: String, success: () -> Unit, failed: (Int) -> Unit) {
+            viewModelScope.ui {
+                val response = withContext(io) {
+                    comics(token, page, category, sort)
+                } ?: return@ui failed.invoke(R.string.list_snack_exception)
+        
+                if (response.code != RESPONSE_CODE_SUCCESS) {
+                    return@ui failed.invoke(R.string.list_snack_error_code)
+                }
+        
+                val comicResponseBody = response.decodeJson<ComicsResponseBody>()
+                comicsResponseBodies.add(comicResponseBody)
+                docs.addAll(
+                    comicResponseBody.data
+                        .comics
+                        .docs
+                )
+                success.invoke()
+            }
+        }
 
     }
     
@@ -68,15 +105,11 @@ class ListFragment: BaseFragment() {
 
     private var sort = SORT_NEW_TO_OLD
 
-    private var job: Job? = null
-
     private val comics: Comics by viewModels()
     private val comicCover: ComicCover by viewModels(
         ownerProducer = { requireActivity() }
     )
 
-    private val comicsResponseBodies: ArrayList<ComicsResponseBody>
-        get() = comics.comicsResponseBodies
     private val docs: ArrayList<Doc>
         get() = comics.docs
     private val covers: MutableMap<String, Bitmap?>
@@ -90,9 +123,6 @@ class ListFragment: BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedElementEnterTransition = MaterialContainerTransform()
-        val argument = requireArguments()
-        comics.category = argument.getString(ARG_CATEGORY, ARG_DEFAULT_VALUE)
-        comics.keyword = argument.getString(ARG_KEYWORD, ARG_DEFAULT_VALUE)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -141,35 +171,29 @@ class ListFragment: BaseFragment() {
                 }
             }
         })
-
-        if (comicsResponseBodies.isEmpty()) {
-            job = io {
-                val response = startRequest()
-                if (response != null) {
-                    comicsResponseBodies.add(response)
-                    docs.addAll(comicsResponseBodies.last().data.comics.docs)
-                    ui { recyclerViewAdapter.notifyListUpdate() }
-                }
-                job = null
+        
+        val success = {
+            recyclerViewAdapter.notifyListUpdate()
+        }
+        
+        val failed: (Int) -> Unit = { resId ->
+            root.showSnack(resId)
+        }
+        
+        val argument = requireArguments()
+        when {
+            argument.containsKey(ARG_CATEGORY) -> {
+                comics.category = argument.getString(ARG_CATEGORY)
+                comics.initialWithCategory(applicationConfigs.token.value, sort, success, failed)
             }
+            argument.containsKey(ARG_KEYWORD) -> {
+                comics.keyword = argument.getString(ARG_KEYWORD)
+            }
+            else -> failed.invoke(R.string.list_snack_arg_required)
         }
+        
+        
     }
-
-    private fun startRequest(): ComicsResponseBody? {
-        val category = category
-        return when {
-            !category.isNullOrBlank() -> requestComic(category, comicsResponseBodies.size + 1)
-            else -> null
-        }
-    }
-
-    private fun requestComic(category: String, page: Int) =
-        applicationConfigs.token
-            .value
-            ?.let { comics(it, page, category, sort) }
-            ?.body
-            ?.string()
-            ?.let { Json.decodeFromString<ComicsResponseBody>(it) }
 
     override fun onDestroyView() {
         if (!requireCaching) {
