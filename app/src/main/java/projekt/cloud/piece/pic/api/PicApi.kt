@@ -12,5 +12,7 @@ object PicApi {
 
     const val API_COMICS = "comics"
     const val API_COMICS_INFO = "comics/"
+    fun comicEpisodeOf(id: String, page: Int) =
+        "$API_COMICS/$id/eps?page=$page"
 
 }

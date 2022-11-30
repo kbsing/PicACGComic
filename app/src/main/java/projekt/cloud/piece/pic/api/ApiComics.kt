@@ -1,12 +1,14 @@
 package projekt.cloud.piece.pic.api
 
 import java.net.URLEncoder
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import projekt.cloud.piece.pic.api.CommonBody.Avatar
 import projekt.cloud.piece.pic.api.CommonBody.Thumb
 import projekt.cloud.piece.pic.api.PicApi.API_COMICS
 import projekt.cloud.piece.pic.api.PicApi.API_COMICS_INFO
 import projekt.cloud.piece.pic.api.PicApi.API_URL
+import projekt.cloud.piece.pic.api.PicApi.comicEpisodeOf
 import projekt.cloud.piece.pic.api.RequestHeaders.generateHeaders
 import projekt.cloud.piece.pic.util.HttpUtil.GET
 import projekt.cloud.piece.pic.util.HttpUtil.asParams
@@ -116,6 +118,38 @@ object ApiComics {
 
     fun comic(id: String, token: String) =
         (API_COMICS_INFO + id).let { method ->
+            httpGet(API_URL + method, generateHeaders(method, GET, token))
+        }
+    
+    @Serializable
+    data class EpisodeResponseBody(val code: Int, val message: String, val data: Data) {
+        
+        @Serializable
+        data class Data(val eps: Episode) {
+            
+            @Serializable
+            data class Episode(val docs: List<Doc>,
+                               val total: Int,
+                               val limit: Int,
+                               val page: Int,
+                               val pages: Int) {
+                
+                @Serializable
+                data class Doc(
+                    val _id: String,
+                    val title: String,
+                    val order: Int,
+                    @SerialName("updated_at")
+                    val updateDate: String,
+                    val id: String
+                )
+                
+            }
+        }
+    }
+    
+    fun episode(id: String, page: Int, token: String) =
+        comicEpisodeOf(id, page).let { method ->
             httpGet(API_URL + method, generateHeaders(method, GET, token))
         }
 
