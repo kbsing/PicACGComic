@@ -22,8 +22,13 @@ object CommonBody {
     )
     
     private const val THUMB_URL_DIVIDER = "/static/"
+    private val String.serverWithDivider: String
+        get() = when {
+            contains(THUMB_URL_DIVIDER) -> this
+            else -> this + THUMB_URL_DIVIDER
+        }
     val Thumb.bitmap: Bitmap?
-        get() = httpGet(fileServer + THUMB_URL_DIVIDER + path)?.body?.byteStream()?.let {
+        get() = httpGet(fileServer.serverWithDivider + path)?.body?.byteStream()?.let {
             BitmapFactory.decodeStream(it)
         }
 
