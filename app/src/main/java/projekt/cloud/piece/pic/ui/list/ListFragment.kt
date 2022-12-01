@@ -23,7 +23,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
-import projekt.cloud.piece.pic.ComicCover
+import projekt.cloud.piece.pic.Comic
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody
 import projekt.cloud.piece.pic.api.ApiComics.ComicsResponseBody.Data.Comics.Doc
@@ -123,7 +123,7 @@ class ListFragment: BaseFragment() {
     private var sort = SORT_NEW_TO_OLD
 
     private val comics: Comics by viewModels()
-    private val comicCover: ComicCover by viewModels(
+    private val comic: Comic by viewModels(
         ownerProducer = { requireActivity() }
     )
 
@@ -159,7 +159,7 @@ class ListFragment: BaseFragment() {
         }
         val recyclerViewAdapter = RecyclerViewAdapter(docs, covers) { doc, v ->
             requireCaching = true
-            comicCover.setCover(covers[doc._id])
+            comic.setCover(covers[doc._id])
             navController.navigate(
                 ListFragmentDirections.actionListToComicDetail(doc._id, v.transitionName),
                 FragmentNavigatorExtras(v to v.transitionName)

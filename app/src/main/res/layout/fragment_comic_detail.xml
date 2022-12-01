@@ -10,10 +10,7 @@
             type="projekt.cloud.piece.pic.ApplicationConfigs" />
         <variable
             name="comic"
-            type="projekt.cloud.piece.pic.ui.comicDetail.ComicDetailFragment.Comic" />
-        <variable
-            name="comicCover"
-            type="projekt.cloud.piece.pic.ComicCover" />
+            type="projekt.cloud.piece.pic.Comic" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -43,7 +40,7 @@
                     android:scaleType="fitXY"
                     android:fitsSystemWindows="true"
                     app:layout_collapseMode="parallax"
-                    bitmap="@{comicCover.cover}" />
+                    bitmap="@{comic.cover}" />
 
                 <com.google.android.material.appbar.MaterialToolbar
                     android:id="@+id/material_toolbar"
