@@ -37,6 +37,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.transition.platform.MaterialContainerTransform
+import kotlin.math.abs
 import kotlinx.coroutines.withContext
 import okhttp3.Response
 import projekt.cloud.piece.pic.ComicCover
@@ -54,6 +55,7 @@ import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 import projekt.cloud.piece.pic.util.DisplayUtil.deviceBounds
 import projekt.cloud.piece.pic.util.FragmentUtil.setSupportActionBar
 import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
+import projekt.cloud.piece.pic.util.NestedScrollViewUtil.isScrollable
 import projekt.cloud.piece.pic.util.RequestFailedMethodBlock
 import projekt.cloud.piece.pic.util.RequestSuccessMethodBlock
 import projekt.cloud.piece.pic.util.ResponseUtil.decodeJson
@@ -135,6 +137,8 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
     private val binding: FragmentComicDetailBinding
         get() = _binding!!
     private val root get() = binding.root
+    private val appBarLayout: AppBarLayout
+        get() = binding.appBarLayout
     private val collapsingToolbarLayout: CollapsingToolbarLayout
         get() = binding.collapsingToolbarLayout
     private val toolbar: MaterialToolbar
@@ -237,6 +241,21 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
                 success = { (recyclerView.adapter as RecyclerViewAdapter).notifyDataUpdated() },
                 failed = { resId -> root.showSnack(resId) }
             )
+        }
+        
+        appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+            when {
+                abs(verticalOffset) >= appBarLayout.totalScrollRange -> {
+                    if (!nestedScrollView.isScrollable && !bottomAppBar.isScrolledDown) {
+                        bottomAppBar.performHide()
+                    }
+                }
+                else -> {
+                    if (!nestedScrollView.isScrollable && !bottomAppBar.isScrolledUp) {
+                        bottomAppBar.performShow()
+                    }
+                }
+            }
         }
     }
 
