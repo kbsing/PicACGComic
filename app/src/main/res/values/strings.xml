@@ -7,6 +7,7 @@
 
     <string name="home_search">Search</string>
     <string name="home_snack_not_logged_in">@string/request_not_logged</string>
+    <string name="home_snack_button_login">Login</string>
     <string name="home_snack_exception">@string/response_exception</string>
     <string name="home_snack_error_code">@string/response_error_code</string>
     

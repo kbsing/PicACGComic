@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView.State
 import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.transition.platform.Hold
 import kotlinx.coroutines.withContext
 import projekt.cloud.piece.pic.R
@@ -38,6 +39,7 @@ import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
 import projekt.cloud.piece.pic.util.ResponseUtil.decodeJson
 import projekt.cloud.piece.pic.util.SnackUtil.showSnack
+import projekt.cloud.piece.pic.util.SnackUtil.snack
 
 class HomeFragment: BaseFragment(), OnClickListener {
 
@@ -56,7 +58,7 @@ class HomeFragment: BaseFragment(), OnClickListener {
                     categories.clear()
                     thumbs.clear()
                 }
-                return failed.invoke(R.string.home_snack_exception)
+                return
             }
             if (categories.isEmpty()) {
                 viewModelScope.ui {
@@ -167,6 +169,12 @@ class HomeFragment: BaseFragment(), OnClickListener {
         )
 
         applicationConfigs.token.observe(viewLifecycleOwner) {
+            if (it == null) {
+                root.snack(R.string.home_snack_not_logged_in, LENGTH_INDEFINITE)
+                    .setAction(R.string.home_snack_button_login) { floatingActionButton.callOnClick() }
+                    .setAnchorView(bottomAppBar)
+                    .show()
+            }
             categories.updateCategories(
                 it,
                 success = { updateCategories() },
