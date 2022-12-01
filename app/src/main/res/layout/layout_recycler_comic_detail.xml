@@ -35,7 +35,7 @@
             android:layout_centerVertical="true"
             android:text="@{doc.title}"
             android:layout_toEndOf="@id/material_text_view_index"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1" />
         
     </RelativeLayout>
 </layout>
