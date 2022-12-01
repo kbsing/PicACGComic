@@ -6,6 +6,9 @@
 
     <data>
         <variable
+            name="applicationConfigs"
+            type="projekt.cloud.piece.pic.ApplicationConfigs" />
+        <variable
             name="comic"
             type="projekt.cloud.piece.pic.ui.comicDetail.ComicDetailFragment.Comic" />
         <variable
@@ -61,7 +64,8 @@
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingBottom="@{applicationConfigs.windowInsetBottom}">
     
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"

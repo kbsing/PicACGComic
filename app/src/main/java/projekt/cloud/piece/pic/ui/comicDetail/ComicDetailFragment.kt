@@ -183,6 +183,7 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
         collapsingToolbarLayout.updateLayoutParams<AppBarLayout.LayoutParams> {
             height = requireContext().deviceBounds.width() * 4 / 3
         }
+        binding.applicationConfigs = applicationConfigs
         binding.comic = comic
         binding.comicCover = comicCover
         binding.lifecycleOwner = viewLifecycleOwner
