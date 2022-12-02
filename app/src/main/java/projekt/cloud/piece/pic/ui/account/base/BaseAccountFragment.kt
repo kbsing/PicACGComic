@@ -9,13 +9,7 @@ import projekt.cloud.piece.pic.ui.account.AccountFragment
 open class BaseAccountFragment: BaseFragment() {
 
     private val accountFragment: AccountFragment
-        get() {
-            var containerFragment = requireParentFragment()
-            while (containerFragment !is AccountFragment) {
-                containerFragment = containerFragment.requireParentFragment()
-            }
-            return containerFragment
-        }
+        get() = findParentAs()
 
     protected fun transactionTo(fragment: Fragment, enterTransition: Any) {
         fragment.enterTransition = enterTransition
