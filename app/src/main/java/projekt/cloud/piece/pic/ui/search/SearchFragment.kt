@@ -13,18 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.SearchView.OnQueryTextListener
 import androidx.core.view.MenuProvider
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
-import projekt.cloud.piece.pic.ApplicationConfigs
 import projekt.cloud.piece.pic.R
+import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentSearchBinding
 
-class SearchFragment: Fragment() {
+class SearchFragment: BaseFragment() {
 
     private lateinit var navController: NavController
 
@@ -34,8 +32,6 @@ class SearchFragment: Fragment() {
     private val root get() = binding.root
     private val toolbar: MaterialToolbar
         get() = binding.materialToolbar
-
-    private val applicationConfigs: ApplicationConfigs by viewModels(ownerProducer = { requireActivity() })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
