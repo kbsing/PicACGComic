@@ -17,7 +17,7 @@ import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
 import androidx.core.widget.NestedScrollView
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle.State
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -76,9 +76,7 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
     private val recyclerView: RecyclerView
         get() = binding.recyclerView
 
-    private val comic: Comic by viewModels(
-        ownerProducer = { requireActivity() }
-    )
+    private val comic: Comic by activityViewModels()
     
     private val docList: ArrayList<Episode.Doc>
         get() = comic.docList
