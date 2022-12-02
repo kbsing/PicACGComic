@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.doOnPreDraw
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -123,9 +124,7 @@ class ListFragment: BaseFragment() {
     private var sort = SORT_NEW_TO_OLD
 
     private val comics: Comics by viewModels()
-    private val comic: Comic by viewModels(
-        ownerProducer = { requireActivity() }
-    )
+    private val comic: Comic by activityViewModels()
 
     private val docs: ArrayList<Doc>
         get() = comics.docs
