@@ -65,6 +65,25 @@
     <fragment
         android:id="@+id/comic_detail"
         android:name="projekt.cloud.piece.pic.ui.comicDetail.ComicDetailFragment"
-        tools:layout="@layout/fragment_comic_detail" />
+        tools:layout="@layout/fragment_comic_detail" >
+        <action
+            android:id="@+id/action_comic_detail_to_readFragment"
+            app:destination="@id/readFragment">
+            <argument
+                android:name="read_transition"
+                android:defaultValue="@null"
+                app:argType="string"
+                app:nullable="true" />
+            <argument
+                android:name="index"
+                android:defaultValue="0"
+                app:argType="integer" />
+        </action>
+    </fragment>
+    
+    <fragment
+        android:id="@+id/readFragment"
+        android:name="projekt.cloud.piece.pic.ui.read.ReadFragment"
+        tools:layout="@layout/fragment_read" />
 
 </navigation>
