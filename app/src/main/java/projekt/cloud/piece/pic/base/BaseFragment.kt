@@ -8,4 +8,12 @@ open class BaseFragment: Fragment() {
     
     protected val applicationConfigs: ApplicationConfigs by activityViewModels()
     
+    protected inline fun <reified F: Fragment> findParentAs(): F {
+        var parent = requireParentFragment()
+        while (parent !is F) {
+            parent = parent.requireParentFragment()
+        }
+        return parent
+    }
+    
 }
