@@ -7,6 +7,7 @@ import projekt.cloud.piece.pic.api.CommonBody.Image
 import projekt.cloud.piece.pic.api.PicApi.API_COMICS
 import projekt.cloud.piece.pic.api.PicApi.API_COMICS_INFO
 import projekt.cloud.piece.pic.api.PicApi.API_URL
+import projekt.cloud.piece.pic.api.PicApi.comicEpisodeContentOf
 import projekt.cloud.piece.pic.api.PicApi.comicEpisodeOf
 import projekt.cloud.piece.pic.api.RequestHeaders.generateHeaders
 import projekt.cloud.piece.pic.util.HttpUtil.GET
@@ -154,6 +155,32 @@ object ApiComics {
     
     fun episode(id: String, page: Int, token: String) =
         comicEpisodeOf(id, page).let { method ->
+            httpGet(API_URL + method, generateHeaders(method, GET, token))
+        }
+    
+    @Serializable
+    data class EpisodeContentResponseBody(val code: Int, val message: String, val data: Data) {
+        
+        @Serializable
+        data class Data(val pages: Pages, val ep: Ep) {
+            
+            @Serializable
+            data class Pages(val docs: List<Doc>, val total: Int, val limit: Int, val page: Int, val pages: Int) {
+                
+                @Serializable
+                data class Doc(val _id: String, val media: Image, val id: String)
+                
+            }
+            
+            @Serializable
+            data class Ep(@SerialName("_id") val id: String, val title: String)
+            
+        }
+        
+    }
+    
+    fun episodeContent(comicId: String, episodeOrder: Int, page: Int, token: String) =
+        comicEpisodeContentOf(comicId, episodeOrder, page).let { method ->
             httpGet(API_URL + method, generateHeaders(method, GET, token))
         }
 

@@ -14,5 +14,8 @@ object PicApi {
     const val API_COMICS_INFO = "comics/"
     fun comicEpisodeOf(id: String, page: Int) =
         "$API_COMICS/$id/eps?page=$page"
+    
+    fun comicEpisodeContentOf(id: String, order: Int, page: Int) =
+        "$API_COMICS/$id/order/$order/pages?page=$page"
 
 }
