@@ -1,7 +1,6 @@
 package projekt.cloud.piece.pic.ui.account.detail
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -28,12 +27,10 @@ import kotlinx.serialization.json.Json
 import projekt.cloud.piece.pic.R
 import projekt.cloud.piece.pic.api.ApiUser.ProfileResponseBody
 import projekt.cloud.piece.pic.api.ApiUser.userProfile
-import projekt.cloud.piece.pic.api.CommonBody.bitmap
 import projekt.cloud.piece.pic.base.BaseFragment
 import projekt.cloud.piece.pic.databinding.FragmentAccountDetailBinding
 import projekt.cloud.piece.pic.util.CircularCroppedDrawable
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
-import projekt.cloud.piece.pic.util.HttpUtil.httpGet
 
 class AccountDetailFragment: BaseFragment() {
 

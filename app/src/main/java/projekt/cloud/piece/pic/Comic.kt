@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.withContext
 import okhttp3.Response
 import projekt.cloud.piece.pic.api.ApiComics
-import projekt.cloud.piece.pic.api.CommonBody.bitmap
 import projekt.cloud.piece.pic.util.CoroutineUtil
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 import projekt.cloud.piece.pic.util.HttpUtil

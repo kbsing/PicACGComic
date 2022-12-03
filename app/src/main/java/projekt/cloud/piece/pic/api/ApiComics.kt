@@ -3,8 +3,7 @@ package projekt.cloud.piece.pic.api
 import java.net.URLEncoder
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import projekt.cloud.piece.pic.api.CommonBody.Avatar
-import projekt.cloud.piece.pic.api.CommonBody.Thumb
+import projekt.cloud.piece.pic.api.CommonBody.Image
 import projekt.cloud.piece.pic.api.PicApi.API_COMICS
 import projekt.cloud.piece.pic.api.PicApi.API_COMICS_INFO
 import projekt.cloud.piece.pic.api.PicApi.API_URL
@@ -46,7 +45,7 @@ object ApiComics {
                     val epsCount: Int,
                     val finished: Boolean,
                     val categories: List<String>,
-                    val thumb: Thumb,
+                    val thumb: Image,
                     val id: String = "",
                     val likesCount: Int
                 )
@@ -78,7 +77,7 @@ object ApiComics {
                              val creator: Creator,
                              val title: String,
                              val description: String,
-                             val thumb: Thumb,
+                             val thumb: Image,
                              val author: String,
                              val chineseTeam: String = "",
                              val categories: List<String>,
@@ -114,7 +113,7 @@ object ApiComics {
                     val level: Int,
                     val characters: List<String>,
                     val role: String,
-                    val avatar: Avatar
+                    val avatar: Image
                 )
 
             }

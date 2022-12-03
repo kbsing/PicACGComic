@@ -1,7 +1,7 @@
 package projekt.cloud.piece.pic.api
 
 import kotlinx.serialization.Serializable
-import projekt.cloud.piece.pic.api.CommonBody.Thumb
+import projekt.cloud.piece.pic.api.CommonBody.Image
 import projekt.cloud.piece.pic.api.PicApi.API_CATEGORIES
 import projekt.cloud.piece.pic.api.PicApi.API_URL
 import projekt.cloud.piece.pic.api.RequestHeaders.generateHeaders
@@ -21,7 +21,7 @@ object ApiCategories {
                 val _id: String? = null,
                 val title: String,
                 val description: String? = null,
-                val thumb: Thumb,
+                val thumb: Image,
                 val isWeb: Boolean = false,
                 val active: Boolean = true,
                 val link: String? = null
