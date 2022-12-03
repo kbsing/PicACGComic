@@ -226,6 +226,7 @@
             android:layout_marginTop="@dimen/md_spec_fab_spacing_top"
             android:layout_marginEnd="@dimen/md_spec_fab_spacing_end"
             android:layout_marginBottom="@dimen/md_spec_fab_spacing_bottom"
+            android:transitionName="@string/read_transition"
             app:layout_anchor="@id/bottom_app_bar"
             tools:ignore="ContentDescription" />
 

@@ -19,6 +19,8 @@ import androidx.core.view.updateMargins
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle.State
+import androidx.navigation.NavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -80,9 +82,12 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
     
     private val docList: ArrayList<Episode.Doc>
         get() = comic.docList
+    
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        navController = findNavController()
         sharedElementEnterTransition = MaterialContainerTransform()
         val arguments = requireArguments()
         if (arguments.containsKey(ARG_ID)) {
@@ -112,7 +117,6 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val navController = findNavController()
         setSupportActionBar(bottomAppBar)
         bottomAppBar.performHide(false)
         toolbar.setupWithNavController(navController)
@@ -199,7 +203,12 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
                 }
                 creatorDetailIndicator.isChecked = creatorDetail.visibility == VISIBLE
             }
-            floatingActionButton -> {}
+            floatingActionButton -> {
+                navController.navigate(
+                    ComicDetailFragmentDirections.actionComicDetailToReadFragment(),
+                    FragmentNavigatorExtras(floatingActionButton to floatingActionButton.transitionName)
+                )
+            }
         }
     }
     
