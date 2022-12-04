@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 import kotlinx.coroutines.withContext
@@ -74,7 +73,6 @@ class ComicContentFragment: BaseFragment() {
         val docs = arrayListOf<Doc>()
         val images = mutableMapOf<String, Bitmap?>()
         val recyclerViewAdapter = RecyclerViewAdapter(lifecycleScope, docs, images)
-        recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = recyclerViewAdapter
         
         lifecycleScope.ui {
