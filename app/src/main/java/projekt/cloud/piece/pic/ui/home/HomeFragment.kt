@@ -26,6 +26,7 @@ import com.google.android.material.bottomappbar.BottomAppBar
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.Hold
 import kotlinx.coroutines.withContext
 import projekt.cloud.piece.pic.R
@@ -190,6 +191,10 @@ class HomeFragment: BaseFragment(), OnClickListener {
         @Suppress("NotifyDataSetChanged")
         (recyclerView.adapter as RecyclerViewAdapter)
             .notifyDataSetChanged()
+    }
+    
+    override fun onMessageReceived(message: String, length: Int, snack: Snackbar.() -> Unit) {
+        root.snack(message, length).apply(snack).setAnchorView(bottomAppBar).show()
     }
 
     override fun onDestroyView() {
