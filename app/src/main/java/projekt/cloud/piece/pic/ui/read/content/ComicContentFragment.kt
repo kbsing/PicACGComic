@@ -32,6 +32,8 @@ class ComicContentFragment: BaseFragment() {
     private val binding: FragmentComicContentBinding
         get() = _binding!!
     private val root get() = binding.root
+    private val toolbar: MaterialToolbar
+        get() = binding.materialToolbar
     private val recyclerView: RecyclerView
         get() = binding.recyclerView
     
@@ -43,6 +45,9 @@ class ComicContentFragment: BaseFragment() {
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setSupportActionBar(toolbar)
+        toolbar.setupWithNavController(navController)
+        
         val pages = arrayListOf<Pages>()
         val docs = arrayListOf<Doc>()
         val images = mutableMapOf<String, Bitmap?>()
