@@ -108,7 +108,7 @@ object ApiComics {
                     val gender: String,
                     val name: String,
                     val slogan: String = "",
-                    val title: String,
+                    val title: String = "",
                     val verified: Boolean = false,
                     val exp: Int,
                     val level: Int,
