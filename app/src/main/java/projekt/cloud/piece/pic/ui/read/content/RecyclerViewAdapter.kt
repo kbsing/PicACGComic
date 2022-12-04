@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import kotlinx.coroutines.Job
@@ -14,23 +15,25 @@ import projekt.cloud.piece.pic.databinding.LayoutRecyclerComicContentBinding
 import projekt.cloud.piece.pic.util.CoroutineUtil.io
 import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 
-class RecyclerViewAdapter(private val docs: List<Doc>, private val images: MutableMap<String, Bitmap?>):
+class RecyclerViewAdapter(private val lifecycleCoroutineScope: LifecycleCoroutineScope,
+                          private val docs: List<Doc>,
+                          private val images: MutableMap<String, Bitmap?>):
     RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>() {
     
-    class RecyclerViewHolder(private val binding: LayoutRecyclerComicContentBinding): ViewHolder(binding.root) {
+     class RecyclerViewHolder(private val binding: LayoutRecyclerComicContentBinding): ViewHolder(binding.root) {
         constructor(view: View): this(view.context)
         constructor(context: Context): this(LayoutInflater.from(context))
         constructor(layoutInflater: LayoutInflater): this(LayoutRecyclerComicContentBinding.inflate(layoutInflater))
         
         private var job: Job? = null
         
-        fun setDoc(doc: Doc, images: MutableMap<String, Bitmap?>) {
+        fun setDoc(lifecycleCoroutineScope: LifecycleCoroutineScope, doc: Doc, images: MutableMap<String, Bitmap?>) {
             val id = doc._id
             when {
                 images.containsKey(id) -> binding.bitmap = images[id]
                 else -> {
                     job?.cancel()
-                    job = ui {
+                    job = lifecycleCoroutineScope.ui {
                         val image = withContext(io) {
                             doc.media.bitmap
                         }
@@ -48,7 +51,7 @@ class RecyclerViewAdapter(private val docs: List<Doc>, private val images: Mutab
         RecyclerViewHolder(parent)
     
     override fun onBindViewHolder(holder: RecyclerViewHolder, position: Int) {
-        holder.setDoc(docs[position], images)
+        holder.setDoc(lifecycleCoroutineScope, docs[position], images)
     }
     
     override fun getItemCount() = docs.size
