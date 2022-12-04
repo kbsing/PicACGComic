@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView.State
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
@@ -37,7 +38,7 @@ import projekt.cloud.piece.pic.util.CoroutineUtil.ui
 import projekt.cloud.piece.pic.util.FragmentUtil.setSupportActionBar
 import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
 import projekt.cloud.piece.pic.util.ResponseUtil.decodeJson
-import projekt.cloud.piece.pic.util.SnackUtil.showSnack
+import projekt.cloud.piece.pic.util.SnackUtil.snack
 
 class ListFragment: BaseFragment() {
 
@@ -196,7 +197,8 @@ class ListFragment: BaseFragment() {
             recyclerView.invalidateItemDecorations()
         }
         val failed: (Int) -> Unit = { resId ->
-            root.showSnack(resId)
+            sendMessage(resId)
+            navController.navigateUp()
         }
         val argument = requireArguments()
         when {
@@ -218,6 +220,10 @@ class ListFragment: BaseFragment() {
             }
         })
         
+    }
+    
+    override fun onMessageReceived(message: String, length: Int, snack: Snackbar.() -> Unit) {
+        root.snack(message, length).apply(snack).show()
     }
 
     override fun onDestroyView() {
