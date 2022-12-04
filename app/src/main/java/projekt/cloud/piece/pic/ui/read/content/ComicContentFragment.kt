@@ -96,12 +96,13 @@ class ComicContentFragment: BaseFragment() {
                 
                 pages.add(data.pages)
                 docs.addAll(data.pages.docs)
+    
+                succeed()
                 
                 if (pages.size == data.pages.pages) {
                     break
                 }
             }
-            succeed()
         }
     }
     
