@@ -49,6 +49,9 @@
     
     <string name="read_transition">read_transition</string>
     <string name="read_transition_prefix">read_transition_</string>
+    <string name="comic_content_snack_arg_required">Argument Not Enough</string>
+    <string name="comic_content_snack_exception">@string/response_exception</string>
+    <string name="comic_content_snack_error_code">@string/response_error_code</string>
     
     <string name="storage_account">storage_account</string>
 
