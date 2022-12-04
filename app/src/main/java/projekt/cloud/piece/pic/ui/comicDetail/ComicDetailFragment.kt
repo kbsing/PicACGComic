@@ -84,6 +84,8 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
         get() = comic.docList
     
     private lateinit var navController: NavController
+    
+    private var clearComicData = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -190,7 +192,9 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
     
     override fun onDestroyView() {
         _binding = null
-        comic.setCover(null)
+        if (clearComicData) {
+            comic.clearAll()
+        }
         super.onDestroyView()
     }
     
@@ -204,6 +208,7 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
                 creatorDetailIndicator.isChecked = creatorDetail.visibility == VISIBLE
             }
             floatingActionButton -> {
+                clearComicData = false
                 navController.navigate(
                     ComicDetailFragmentDirections.actionComicDetailToReadFragment(),
                     FragmentNavigatorExtras(floatingActionButton to floatingActionButton.transitionName)

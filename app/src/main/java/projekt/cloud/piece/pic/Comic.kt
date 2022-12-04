@@ -89,4 +89,13 @@ class Comic: ViewModel() {
         }
     }
     
+    fun clearAll() {
+        id = null
+        _comic.value = null
+        _cover.value = null
+        _avatar.value = null
+        episodeList.clear()
+        docList.clear()
+    }
+    
 }
