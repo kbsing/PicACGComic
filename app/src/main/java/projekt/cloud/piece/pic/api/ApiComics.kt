@@ -179,7 +179,8 @@ object ApiComics {
         
     }
     
-    fun episodeContent(comicId: String, episodeOrder: Int, page: Int, token: String) =
+    private const val EPISODE_CONTENT_FIRST_PAGE = 1
+    fun episodeContent(comicId: String, episodeOrder: Int, page: Int = EPISODE_CONTENT_FIRST_PAGE, token: String) =
         comicEpisodeContentOf(comicId, episodeOrder, page).let { method ->
             httpGet(API_URL + method, generateHeaders(method, GET, token))
         }
