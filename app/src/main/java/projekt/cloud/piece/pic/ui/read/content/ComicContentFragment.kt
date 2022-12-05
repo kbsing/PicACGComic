@@ -74,7 +74,6 @@ class ComicContentFragment: BaseFragment() {
         val images = mutableMapOf<String, Bitmap?>()
         val recyclerViewAdapter = RecyclerViewAdapter(lifecycleScope, docs, images)
         recyclerView.adapter = recyclerViewAdapter
-        recyclerView.addOnItemTouchListener(RecyclerGesture())
         
         lifecycleScope.ui {
             val token = applicationConfigs.token.value ?: return@ui failed(R.string.request_not_logged)
