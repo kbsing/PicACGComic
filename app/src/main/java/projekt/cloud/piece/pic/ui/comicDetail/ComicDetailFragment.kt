@@ -12,6 +12,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.view.MenuProvider
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.get
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
@@ -33,6 +34,7 @@ import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.android.material.transition.platform.Hold
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import kotlin.math.abs
 import projekt.cloud.piece.pic.Comic
@@ -91,6 +93,7 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
         super.onCreate(savedInstanceState)
         navController = findNavController()
         sharedElementEnterTransition = MaterialContainerTransform()
+        exitTransition = Hold()
         val arguments = requireArguments()
         if (arguments.containsKey(ARG_ID)) {
             comic.id = requireArguments().getString(ARG_ID)
@@ -114,7 +117,8 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
             }
         }
         floatingActionButton.setOnClickListener(this)
-        
+    
+        postponeEnterTransition()
         return root
     }
 
@@ -153,13 +157,19 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
             }
         }, viewLifecycleOwner, State.CREATED)
     
-        recyclerView.adapter = RecyclerViewAdapter(docList) {  }
+        recyclerView.adapter = RecyclerViewAdapter(docList) { index, v ->
+            launchToComicDetail(index, v)
+        }
+        recyclerView.doOnPreDraw { startPostponedEnterTransition() }
+        
         applicationConfigs.token.observe(viewLifecycleOwner) {
-            comic.requestComicInfo(
-                it,
-                success = { (recyclerView.adapter as RecyclerViewAdapter).notifyDataUpdated() },
-                failed = { resId -> root.showSnack(resId) }
-            )
+            if (docList.isEmpty()) {
+                comic.requestComicInfo(
+                    it,
+                    success = { (recyclerView.adapter as RecyclerViewAdapter).notifyDataUpdated() },
+                    failed = { resId -> root.showSnack(resId) }
+                )
+            }
         }
         
         appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
@@ -207,14 +217,16 @@ class ComicDetailFragment: BaseFragment(), OnClickListener {
                 }
                 creatorDetailIndicator.isChecked = creatorDetail.visibility == VISIBLE
             }
-            floatingActionButton -> {
-                clearComicData = false
-                navController.navigate(
-                    ComicDetailFragmentDirections.actionComicDetailToReadFragment(),
-                    FragmentNavigatorExtras(floatingActionButton to floatingActionButton.transitionName)
-                )
-            }
+            floatingActionButton -> launchToComicDetail(view = floatingActionButton)
         }
+    }
+    
+    private fun launchToComicDetail(index: Int = 0, view: View) {
+        clearComicData = false
+        navController.navigate(
+            ComicDetailFragmentDirections.actionComicDetailToReadFragment(view.transitionName, index),
+            FragmentNavigatorExtras(view to view.transitionName)
+        )
     }
     
 }
