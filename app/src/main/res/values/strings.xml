@@ -52,6 +52,8 @@
     <string name="comic_content_snack_arg_required">Argument Not Enough</string>
     <string name="comic_content_snack_exception">@string/response_exception</string>
     <string name="comic_content_snack_error_code">@string/response_error_code</string>
+    <string name="comic_content_fab_prev">Previous Episode</string>
+    <string name="comic_content_fab_next">Next Episode</string>
     
     <string name="storage_account">storage_account</string>
 

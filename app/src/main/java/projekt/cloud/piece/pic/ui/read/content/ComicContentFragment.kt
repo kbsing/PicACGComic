@@ -4,9 +4,12 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.isVisible
 import androidx.core.view.marginBottom
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
@@ -39,7 +42,7 @@ import projekt.cloud.piece.pic.util.FragmentUtil.setSupportActionBar
 import projekt.cloud.piece.pic.util.HttpUtil.RESPONSE_CODE_SUCCESS
 import projekt.cloud.piece.pic.util.ResponseUtil.decodeJson
 
-class ComicContentFragment: BaseFragment() {
+class ComicContentFragment: BaseFragment(), OnClickListener {
 
     private val readFragment: ReadFragment
         get() = findParentAs()
@@ -58,8 +61,12 @@ class ComicContentFragment: BaseFragment() {
         get() = binding.materialToolbar
     private val recyclerView: RecyclerView
         get() = binding.recyclerView
-    private val extendedFab: ExtendedFloatingActionButton
-        get() = binding.extendedFloatingActionButton
+    private val page: ExtendedFloatingActionButton
+        get() = binding.extendedFloatingActionButtonPage
+    private val prev: ExtendedFloatingActionButton
+        get() = binding.floatingActionButtonPrev
+    private val next: ExtendedFloatingActionButton
+        get() = binding.floatingActionButtonNext
     
     private lateinit var navController: NavController
     
@@ -96,18 +103,58 @@ class ComicContentFragment: BaseFragment() {
             }
         
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (!recyclerView.canScrollVertically(1) || !recyclerView.canScrollVertically(-1)) {
-                    extendOrShrinkExtendedFab()
+                when {
+                    !recyclerView.canScrollVertically(-1) -> {
+                        if (page.isVisible) {
+                            page.hide()
+                        }
+                        if (readComic.index > 0 && !prev.isVisible) {
+                            prev.show()
+                        }
+                    }
+                    !recyclerView.canScrollVertically(1) -> {
+                        if (page.isVisible) {
+                            page.hide()
+                        }
+                        if (readComic.index < comic.docList.lastIndex && !prev.isVisible) {
+                            next.show()
+                        }
+                    }
+                    else -> {
+                        if (!page.isVisible) {
+                            page.show()
+                        }
+                        if (prev.isVisible) {
+                            prev.hide()
+                        }
+                        if (next.isVisible) {
+                            next.hide()
+                        }
+                    }
                 }
             }
         })
     
-        val extendedFabMarginBottom = extendedFab.marginBottom
+        val extendedFabMarginBottom = page.marginBottom
         applicationConfigs.windowInsetBottom.observe(viewLifecycleOwner) {
-            extendedFab.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+            page.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                updateMargins(bottom = it + extendedFabMarginBottom)
+            }
+            next.updateLayoutParams<CoordinatorLayout.LayoutParams> {
+                updateMargins(bottom = it + extendedFabMarginBottom)
+            }
+            prev.updateLayoutParams<CoordinatorLayout.LayoutParams> {
                 updateMargins(bottom = it + extendedFabMarginBottom)
             }
         }
+        
+        page.hide()
+        if (readComic.index == 0) {
+            prev.visibility = GONE
+        }
+        page.setOnClickListener(this)
+        prev.setOnClickListener(this)
+        next.setOnClickListener(this)
         
         lifecycleScope.ui {
             val token = applicationConfigs.token.value ?: return@ui failed(R.string.request_not_logged)
@@ -150,14 +197,14 @@ class ComicContentFragment: BaseFragment() {
             else -> layoutManager.findFirstVisibleItemPosition()
         }
         @Suppress("SetTextI18n")
-        extendedFab.text = "${pos + 1} / ${docs.size}"
+        page.text = "${pos + 1} / ${docs.size}"
     }
     
     @Synchronized
     private fun extendOrShrinkExtendedFab(extend: Boolean = true) {
         when {
-            extend && !extendedFab.isExtended -> extendedFab.extend()
-            !extend && extendedFab.isExtended -> extendedFab.shrink()
+            extend && !page.isExtended -> page.extend()
+            !extend && page.isExtended -> page.shrink()
         }
     }
     
@@ -170,5 +217,13 @@ class ComicContentFragment: BaseFragment() {
         sendMessage(message)
         navController.navigateUp()
     }
-
+    
+    override fun onClick(v: View) {
+        when (v) {
+            page -> {}
+            prev -> readComic.index--
+            next -> readComic.index++
+        }
+    }
+    
 }
