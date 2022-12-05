@@ -51,9 +51,11 @@ class ReadFragment: BaseFragment() {
         updateContentFragment(requireAnimation = false)
         readComic.prev.observe(viewLifecycleOwner) {
             updateContentFragment()
+            updateRootTransitionName(it)
         }
         readComic.next.observe(viewLifecycleOwner) {
             updateContentFragment(isForward =  false)
+            updateRootTransitionName(it)
         }
     }
     
@@ -68,6 +70,10 @@ class ReadFragment: BaseFragment() {
             replace(R.id.fragment_container_view, fragment)
         }
         currentContentFragment = fragment
+    }
+    
+    private fun updateRootTransitionName(index: Int) {
+        root.transitionName = getString(R.string.read_transition_prefix) + index
     }
     
 }
