@@ -29,6 +29,7 @@ object ApiUser {
                 val exp: Int,
                 val gender: String,
                 val isPunched: Boolean,
+                val character: String = "",
                 val level: Int,
                 val name: String,
                 val slogan: String = "",
