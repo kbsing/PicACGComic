@@ -1,6 +1,8 @@
 package projekt.cloud.piece.pic.ui.account.detail
 
+import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +38,7 @@ class AccountDetailFragment: BaseFragment() {
 
     class AccountDetail: ViewModel() {
 
-        fun receiveToken(token: String) {
+        fun receiveToken(token: String, resources: Resources) {
             viewModelScope.launch {
                 val profileResponseBody = withContext(io) {
                     userProfile(token)?.body?.string()?.let {
@@ -44,9 +46,15 @@ class AccountDetailFragment: BaseFragment() {
                     }
                 }
                 _profile.value = profileResponseBody?.also {
-                    _avatar.value = withContext(io) {
-                        it.data.user.avatar.bitmap
+                    var avatar = withContext(io) {
+                        it.data.user.avatar?.bitmap
                     }
+                    if (avatar == null) {
+                        avatar = withContext(io) {
+                            BitmapFactory.decodeResource(resources, R.drawable.ic_round_account_circle_24)
+                        }
+                    }
+                    _avatar.value = avatar
                 }
             }
         }
@@ -81,7 +89,7 @@ class AccountDetailFragment: BaseFragment() {
         binding.accountDetail = accountDetail
         binding.lifecycleOwner = viewLifecycleOwner
         applicationConfigs.token.observe(viewLifecycleOwner) {
-            it?.let { accountDetail.receiveToken(it) }
+            it?.let { accountDetail.receiveToken(it, resources) }
         }
         return root
     }

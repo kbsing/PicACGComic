@@ -34,7 +34,7 @@ object ApiUser {
                 val slogan: String = "",
                 val title: String,
                 val verified: Boolean,
-                val avatar: Image
+                val avatar: Image? = null
             )
 
         }
