@@ -38,9 +38,13 @@ class LoginFragment: BaseAccountFragment() {
 
     private companion object {
         val EMAIL_REGEX = "([0-9a-zA-Z]+.)*[0-9a-zA-Z]+@([0-9a-zA-Z].)+.([0-9a-zA-Z])+".toRegex()
-        val regex = "[0-9a-zA-Z._]+".toRegex()
+        val ACCOUNT_REGEX = "[0-9a-zA-Z._@]+".toRegex()
+        const val ACCOUNT_MAX_LENGTH = 32
+        
+        val PASSWORD_REGEX = "[0-9a-zA-Z._]+".toRegex()
         const val PASSWORD_MIN_LENGTH = 8
-        const val PASSWORD_MAX_LENGTH = 16
+        const val PASSWORD_MAX_LENGTH = 32
+        
         const val EMPTY_STR = ""
     }
 
@@ -67,20 +71,17 @@ class LoginFragment: BaseAccountFragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
-        val inputFilters = arrayOf(
-            InputFilter { source, _, _, _, _, _ ->
-                when {
-                    source.matches(regex) -> source
-                    else -> EMPTY_STR
-                }
-            },
-            InputFilter.LengthFilter(PASSWORD_MAX_LENGTH)
-        )
-
         var accountIcon = R.drawable.ic_round_account_circle_24
         account.editText?.let { editText ->
-            editText.filters = inputFilters
+            editText.filters = arrayOf(
+                InputFilter { source, _, _, _, _, _ ->
+                    when {
+                        source.matches(ACCOUNT_REGEX) -> source
+                        else -> EMPTY_STR
+                    }
+                },
+                InputFilter.LengthFilter(ACCOUNT_MAX_LENGTH)
+                )
             editText.addTextChangedListener {
                 val drawableId = when {
                     it.isEmail -> R.drawable.ic_round_email_24
@@ -101,7 +102,15 @@ class LoginFragment: BaseAccountFragment() {
                     checkIfAccountPasswordFilled()
                 }
 
-                editText.filters = inputFilters
+                editText.filters = arrayOf(
+                    InputFilter { source, _, _, _, _, _ ->
+                        when {
+                            source.matches(PASSWORD_REGEX) -> source
+                            else -> EMPTY_STR
+                        }
+                    },
+                    InputFilter.LengthFilter(PASSWORD_MAX_LENGTH)
+                    )
 
                 var isPasswordVisible = false
                 setEndIconOnClickListener {
