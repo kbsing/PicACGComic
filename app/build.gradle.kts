@@ -14,7 +14,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "projekt.cloud.piece.pic"
+        applicationId = namespace
         minSdk = 21
         targetSdk = 33
         versionCode = 1
