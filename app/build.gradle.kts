@@ -1,3 +1,6 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+import java.text.SimpleDateFormat
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -30,6 +33,14 @@ android {
             isMinifyEnabled = false
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+        }
+    }
+    applicationVariants.all {
+        outputs.all {
+            if (this is BaseVariantOutputImpl) {
+                outputFileName = defaultConfig.applicationId + "-" + defaultConfig.versionName + "-" + defaultConfig.versionCode + "-" +
+                    SimpleDateFormat("yyyyMMdd").format(System.currentTimeMillis()) + "-" + buildType.name + ".apk"
+            }
         }
     }
     compileOptions {
